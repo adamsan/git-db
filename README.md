@@ -24,6 +24,9 @@ You can find and list all the repositories on your machine, or your most recent 
 creates and configures global templatedir `git config --global init.templatedir %userprofile%/.git-templates`
 - `gitdb list` - lists .git repositories on your machine from it's database
 - `gitdb cd <repo_id>` - change directory to repository identified by id (number / sha / project name)
+- `gitdb favor <repo_id>` - mark repository as favorite
+- `gitdb unfavor <repo_id>` - unmark repository as favorite
+- `gitdb help` - prints help
 
 ###Similar projects
 
