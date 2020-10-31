@@ -1,5 +1,9 @@
 package hu.adamsan.gitdb
 
+import hu.adamsan.gitdb.commands.ChangeDirectory
+import hu.adamsan.gitdb.commands.Help
+import hu.adamsan.gitdb.commands.Init
+import hu.adamsan.gitdb.commands.Repos
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -21,42 +25,12 @@ class GitdbApplication : ApplicationRunner {
         log.info("Command = ${command}")
 
         when (command) {
-            "init" -> init()
-            "list" -> list();
-            "cd" -> cd(args?.sourceArgs?.get(1))
-            else -> help()
+            "init" -> Init().run()
+            "list" -> Repos().list();
+            "cd" -> ChangeDirectory().cd(args?.sourceArgs?.get(1))
+            else -> Help().run()
         }
     }
-
-    private fun list() {
-        TODO("Not yet implemented")
-    }
-
-    private fun init() {
-        TODO("Not yet implemented")
-    }
-
-    private fun cd(projectId: String?) {
-        if (projectId == null) {
-            println("Project id can't be null")
-        } else {
-            println("Changing directory to ${projectId}")
-        }
-        TODO("Not yet implemented")
-    }
-
-    private fun help() {
-        println("""
-			A command line tool to better organize, find, and inspect local git repositories.
-			
-			Usage:			
-			${name} help - prints this message
-			${name} init - initializes the tool
-			${name} list - lists all git repositories
-			${name} cd <project_id> - changes directory to repository's directory
-		""".trimIndent())
-    }
-
 }
 
 fun main(args: Array<String>) {
