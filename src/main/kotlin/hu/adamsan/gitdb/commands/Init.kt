@@ -3,6 +3,7 @@ package hu.adamsan.gitdb.commands
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.sql.DriverManager
 
@@ -14,6 +15,7 @@ class Init(var userHome: String, val appname: String) : Command {
 
     override fun run() {
         createGitDbDir(userHome)
+        createDb(userHome)
 
         // create sql database in user home
         // ~/.git-db/repos.db
@@ -38,9 +40,20 @@ class Init(var userHome: String, val appname: String) : Command {
     }
 
     fun createDb(userHome: String) {
-        val db = Paths.get(userHome, ".git-db", ".repos.db")
+        val db = InitObject.dbPath(userHome)
         db.toFile().createNewFile()
-        val createSql = """CREATE TABLE REPO(
+        val createSql = InitObject.createSql
+        DriverManager.getConnection("jdbc:sqlite:$db").use { con ->
+            val stmt = con.prepareStatement(createSql)
+            stmt.execute()
+        }
+    }
+}
+
+object InitObject {
+    fun dbPath(userHome: String): Path = Paths.get(userHome, ".git-db", ".repos.db")
+
+    val createSql = """CREATE TABLE IF NOT EXISTS REPO(
                                ID INT PRIMARY KEY     NOT NULL,
                                NAME           TEXT    NOT NULL,
                                PATH           TEXT     NOT NULL,
@@ -48,8 +61,4 @@ class Init(var userHome: String, val appname: String) : Command {
                                COMMITS        INTEGER DEFAULT 1,
                                LAST_COMMITTED TEXT
                             );""".trimIndent()
-        DriverManager.getConnection("jdbc:sqlite:$db").use { con ->
-            con.prepareStatement(createSql)
-        }
-    }
 }
