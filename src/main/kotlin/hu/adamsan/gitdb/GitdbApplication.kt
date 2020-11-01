@@ -1,7 +1,6 @@
 package hu.adamsan.gitdb
 
 import hu.adamsan.gitdb.commands.*
-import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.SqlObjectPlugin
@@ -16,8 +15,6 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean
-import java.time.Instant
-import java.util.*
 
 @SpringBootApplication
 class GitdbApplication : ApplicationRunner {
@@ -40,6 +37,7 @@ class GitdbApplication : ApplicationRunner {
         jdbi.installPlugin(SqlObjectPlugin())
         return jdbi
     }
+
     @Bean
     fun help(): Help {
         return Help()
@@ -88,7 +86,6 @@ class GitdbApplication : ApplicationRunner {
         println("Find by not existing id:")
         var repo = repoDao.findById(24222)
         println(repo)
-
     }
 }
 
