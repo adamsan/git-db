@@ -43,13 +43,13 @@ class RepoDao(val jdbi: Jdbi) {
         }
     }
 
-    fun findById(id: Int): Repo {
+    fun findById(id: Int): Optional<Repo> {
         val sql = "SELECT * FROM REPO WHERE id=:id"
-        return jdbi.withHandle<Repo, Exception> { h ->
+        return jdbi.withHandle<Optional<Repo>, Exception> { h ->
             h.createQuery(sql)
                     .bind("id", id)
                     .map(mapper)
-                    .first()
+                    .findFirst()
         }
     }
 
