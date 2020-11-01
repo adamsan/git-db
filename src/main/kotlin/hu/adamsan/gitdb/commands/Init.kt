@@ -1,5 +1,6 @@
 package hu.adamsan.gitdb.commands
 
+import hu.adamsan.gitdb.dao.RepoDao
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -17,18 +18,11 @@ class Init(var userHome: String, val appname: String) : Command {
         createGitDbDir(userHome)
         createDb(userHome)
 
-        // create sql database in user home
-        // ~/.git-db/repos.db
+        //TODO:
+        gitConfigTemplateDir(userHome)
+        createHooks(userHome)
+        processGitReposOnMachine(userHome)
 
-        // edit .gitconfig:
-        // git config --global init.templatedir %userprofile%/.git-db/.git-templates
-        // create hooks
-
-
-        // search hard drives for .git dirs
-        // if no post-hook exists: add
-        // else: complete post-hook to update gitdb
-        // save in database
     }
 
     fun createGitDbDir(userHome: String): Boolean {
@@ -42,11 +36,30 @@ class Init(var userHome: String, val appname: String) : Command {
     fun createDb(userHome: String) {
         val db = InitObject.dbPath(userHome)
         db.toFile().createNewFile()
+
+//        repoDao.initRepo()
+
         val createSql = InitObject.createSql
         DriverManager.getConnection("jdbc:sqlite:$db").use { con ->
             val stmt = con.prepareStatement(createSql)
             stmt.execute()
         }
+    }
+
+    fun gitConfigTemplateDir(userHome: String) {
+        // edit .gitconfig:
+        // git config --global init.templatedir %userprofile%/.git-db/.git-templates
+    }
+
+    fun createHooks(userHome: String) {
+        // create hooks
+    }
+
+    fun processGitReposOnMachine(userHome: String) {
+        // search hard drives for .git dirs
+        // if no post-hook exists: add
+        // else: complete post-hook to update gitdb
+        // save in database
     }
 }
 

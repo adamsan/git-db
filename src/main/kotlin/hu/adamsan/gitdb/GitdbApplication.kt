@@ -1,6 +1,8 @@
 package hu.adamsan.gitdb
 
 import hu.adamsan.gitdb.commands.*
+import hu.adamsan.gitdb.dao.Repo
+import hu.adamsan.gitdb.dao.RepoDao
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.SqlObjectPlugin
 import org.slf4j.Logger
@@ -14,6 +16,8 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean
+import java.time.Instant
+import java.util.*
 
 @SpringBootApplication
 class GitdbApplication : ApplicationRunner {
@@ -43,9 +47,10 @@ class GitdbApplication : ApplicationRunner {
         log.info("$name was invoked with command ${command}")
         log.info("User home: $userHome")
 
-        val jdbiBean = this.context.getBean(Jdbi::class.java)
+        //val jdbiBean = this.context.getBean(Jdbi::class.java)
+        //log.info("JDBI BEAN: $jdbiBean")
+        val repoDao = context.getBean(RepoDao::class.java)
 
-        log.info("JDBI BEAN: $jdbiBean")
 
         when (command) {
             "init" -> Init(userHome, name).run()
@@ -53,6 +58,10 @@ class GitdbApplication : ApplicationRunner {
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
             else -> Help().run()
         }
+
+        repoDao.insert(Repo(Random().nextInt(100),"foobar", "c:/foobar", false, 3, Date.from(Instant.now())))
+
+        repoDao.getAll().forEach { println(it) }
     }
 }
 

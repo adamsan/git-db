@@ -1,17 +1,18 @@
 package hu.adamsan.gitdb.commands
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class InitTest {
 
-    val sut = Init("", "gitdb")
+    private val sut = Init("", "gitdb")
 
     @Test
     fun assert_createGitDbDir_creates_directory(@TempDir tmpHome: Path) {
