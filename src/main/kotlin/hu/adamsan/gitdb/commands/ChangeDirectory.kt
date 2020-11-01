@@ -1,7 +1,7 @@
 package hu.adamsan.gitdb.commands
 
 
-class ChangeDirectory {
+class ChangeDirectory(userHome: String) {
     fun cd(projectId: String?) {
         if (projectId == null) {
             println("Project id can't be null")

@@ -15,6 +15,8 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class GitdbApplication : ApplicationRunner {
 
+    @Value("\${user.home}")
+    val userHome = ""
 
     @Value(value = "\${app.name:'gitdb'}")
     val name = ""
@@ -25,11 +27,12 @@ class GitdbApplication : ApplicationRunner {
         val command = args?.sourceArgs?.getOrNull(0)?.toLowerCase()?.trimEnd()?.trimStart() ?: "help"
 
         log.info("$name was invoked with command ${command}")
+        log.info("User home: $userHome")
 
         when (command) {
-            "init" -> Init().run()
-            "list" -> Repos().list();
-            "cd" -> ChangeDirectory().cd(args?.sourceArgs?.get(1))
+            "init" -> Init(userHome, name).run()
+            "list" -> Repos(userHome).list();
+            "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
             else -> Help().run()
         }
     }

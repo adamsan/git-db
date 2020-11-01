@@ -1,7 +1,7 @@
 package hu.adamsan.gitdb.commands
 
 
-class Repos {
+class Repos(userHome: String) {
     fun list() {
 
     }
