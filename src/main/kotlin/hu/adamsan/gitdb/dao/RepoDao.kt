@@ -36,10 +36,20 @@ class RepoDao(val jdbi: Jdbi) {
     }
 
     fun getAll(): List<Repo> {
-        return jdbi.withHandle<List<Repo>, java.lang.Exception> { h ->
+        return jdbi.withHandle<List<Repo>, Exception> { h ->
             h.select("SELECT * FROM REPO")
                     .map(mapper)
                     .list()
+        }
+    }
+
+    fun findById(id: Int): Repo {
+        val sql = "SELECT * FROM REPO WHERE id=:id"
+        return jdbi.withHandle<Repo, Exception> { h ->
+            h.createQuery(sql)
+                    .bind("id", id)
+                    .map(mapper)
+                    .first()
         }
     }
 
@@ -48,6 +58,26 @@ class RepoDao(val jdbi: Jdbi) {
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
                     .bindBean(repo)
+                    .execute()
+        }
+    }
+
+    fun update(repo: Repo) {
+        val sql = "UPDATE REPO " +
+                "SET name=:name, path=:path, favorite=:favorite, commits=:commits, last_committed= :lastCommitted " +
+                "WHERE id= :id"
+        jdbi.withHandle<Int, Exception> { h ->
+            h.createUpdate(sql)
+                    .bindBean(repo)
+                    .execute()
+        }
+    }
+
+    fun delete(repoId: Int) {
+        var sql = "DELETE FROM REPO WHERE id=:id"
+        jdbi.withHandle<Int, Exception> { h ->
+            h.createUpdate(sql)
+                    .bind("id", repoId)
                     .execute()
         }
     }
