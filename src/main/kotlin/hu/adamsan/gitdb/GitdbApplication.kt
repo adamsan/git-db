@@ -40,6 +40,10 @@ class GitdbApplication : ApplicationRunner {
         jdbi.installPlugin(SqlObjectPlugin())
         return jdbi
     }
+    @Bean
+    fun help(): Help {
+        return Help()
+    }
 
     override fun run(args: ApplicationArguments?) {
         val command = args?.sourceArgs?.getOrNull(0)?.toLowerCase()?.trimEnd()?.trimStart() ?: "help"
@@ -49,14 +53,16 @@ class GitdbApplication : ApplicationRunner {
 
         //val jdbiBean = this.context.getBean(Jdbi::class.java)
         //log.info("JDBI BEAN: $jdbiBean")
-        val repoDao = context.getBean(RepoDao::class.java)
+        var repoDao = context.getBean(RepoDao::class.java)
+
+        var help = context.getBean(Help::class.java)
 
 
         when (command) {
             "init" -> Init(userHome, name).run()
             "list" -> Repos(userHome).list();
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
-            else -> Help().run()
+            else -> help.run()
         }
 
         repoDao.insert(Repo(Random().nextInt(100),"foobar", "c:/foobar", false, 3, Date.from(Instant.now())))
