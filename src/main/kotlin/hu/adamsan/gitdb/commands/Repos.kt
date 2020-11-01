@@ -1,8 +1,8 @@
 package hu.adamsan.gitdb.commands
 
 
-class Repos(userHome: String) {
+class Repos(val userHome: String) {
     fun list() {
-
+        println("List.. $userHome")
     }
 }

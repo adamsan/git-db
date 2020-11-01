@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Paths
+import java.sql.DriverManager
 
 
 class Init(var userHome: String, val appname: String) : Command {
@@ -28,12 +29,27 @@ class Init(var userHome: String, val appname: String) : Command {
         // save in database
     }
 
-    fun createGitDbDir(userHome: String) {
+    fun createGitDbDir(userHome: String): Boolean {
         log.info("$appname creates .git-db dir in user home directory: $userHome")
         val userHomePath = Paths.get(userHome)
         val resolve = userHomePath.resolve(configDir)
         val f: File = File(resolve.toString())
-        f.mkdir()
+        return f.mkdir()
     }
 
+    fun createDb(userHome: String) {
+        val db = Paths.get(userHome, ".git-db", ".repos.db")
+        db.toFile().createNewFile()
+        val createSql = """CREATE TABLE REPO(
+                               ID INT PRIMARY KEY     NOT NULL,
+                               NAME           TEXT    NOT NULL,
+                               PATH           TEXT     NOT NULL,
+                               FAVORITE       INTEGER DEFAULT 0,
+                               COMMITS        INTEGER DEFAULT 1,
+                               LAST_COMMITTED TEXT
+                            );""".trimIndent()
+        DriverManager.getConnection("jdbc:sqlite:$db").use { con ->
+            con.prepareStatement(createSql)
+        }
+    }
 }
