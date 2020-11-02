@@ -3,7 +3,7 @@ package hu.adamsan.gitdb
 import hu.adamsan.gitdb.commands.*
 import hu.adamsan.gitdb.dao.RepoDao
 import org.jdbi.v3.core.Jdbi
-import org.jdbi.v3.sqlobject.SqlObjectPlugin
+import org.jdbi.v3.sqlite3.SQLitePlugin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +34,7 @@ class GitdbApplication : ApplicationRunner {
     fun jdbi(): Jdbi {
         val db = InitObject.dbPath(userHome).toString()
         val jdbi = Jdbi.create("jdbc:sqlite:$db")
-        jdbi.installPlugin(SqlObjectPlugin())
+        jdbi.installPlugin(SQLitePlugin())
         return jdbi
     }
 
@@ -57,7 +57,7 @@ class GitdbApplication : ApplicationRunner {
 
 
         when (command) {
-            "init" -> Init(userHome, name).run()
+            "init" -> Init(userHome, name, repoDao).run()
             "list" -> Repos(userHome).list();
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
             else -> help.run()

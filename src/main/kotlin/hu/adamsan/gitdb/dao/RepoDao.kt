@@ -3,8 +3,6 @@ package hu.adamsan.gitdb.dao
 import hu.adamsan.gitdb.commands.InitObject
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.mapper.RowMapper
-import org.jdbi.v3.core.statement.Update
-import org.jdbi.v3.sqlobject.SqlObjectPlugin
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -19,20 +17,6 @@ class RepoDao(val jdbi: Jdbi) {
                 rs.getInt("COMMITS"),
                 Date(rs.getLong("LAST_COMMITTED"))
         )
-    }
-
-
-    fun jdbi(userHome: String): Jdbi {
-        val db = InitObject.dbPath(userHome).toString()
-        val jdbi = Jdbi.create("jdbc:sqlite:$db")
-        jdbi.installPlugin(SqlObjectPlugin())
-        return jdbi
-    }
-
-    fun initRepo() {
-        val withHandle = jdbi.withHandle<Update, Exception> { h ->
-            h.createUpdate(InitObject.createSql)
-        }
     }
 
     fun getAll(): List<Repo> {
@@ -78,6 +62,14 @@ class RepoDao(val jdbi: Jdbi) {
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
                     .bind("id", repoId)
+                    .execute()
+        }
+    }
+
+    fun deleteAll() {
+        var sql = "DELETE FROM REPO"
+        jdbi.withHandle<Int, Exception> { h ->
+            h.createUpdate(sql)
                     .execute()
         }
     }

@@ -21,7 +21,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.xerial", "sqlite-jdbc", "3.32.3.2")
 	implementation("org.jdbi:jdbi3-core:3.17.0")
-	implementation("org.jdbi:jdbi3-sqlobject:3.17.0")
+	implementation("org.jdbi:jdbi3-sqlite:3.17.0")
 	testImplementation ("org.mockito:mockito-inline:3.6.0")
 	testImplementation("org.hamcrest:hamcrest-library:2.1")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {

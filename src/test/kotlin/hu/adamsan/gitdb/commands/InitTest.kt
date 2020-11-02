@@ -1,20 +1,21 @@
 package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.Repo
+import hu.adamsan.gitdb.dao.RepoDao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.Mockito
 import java.io.File
-import java.io.IOException
 import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.SimpleFileVisitor
 import java.util.*
 
 internal class InitTest {
 
-    private val sut = Init("", "gitdb")
+    private val repoDao = Mockito.mock(RepoDao::class.java)
+
+    private val sut = Init("", "gitdb", repoDao)
 
     @Test
     fun assert_createGitDbDir_creates_directory(@TempDir tmpHome: Path) {

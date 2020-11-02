@@ -1,5 +1,6 @@
 package hu.adamsan.gitdb.commands
 
+import hu.adamsan.gitdb.dao.RepoDao
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -9,7 +10,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
 
 
-class Init(var userHome: String, val appname: String) : Command {
+class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Command {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val configDir = ".git-db"
@@ -18,11 +19,16 @@ class Init(var userHome: String, val appname: String) : Command {
         createGitDbDir()
         createDb()
 
-        //TODO:
-        gitConfigTemplateDir()
-        createHooks()
+        gitConfigTemplateDir() //TODO
+        createHooks() //TODO
 
-        processGitReposOnMachine()
+        val repos = findGitReposOnMachine()
+
+        // TODO:
+        // clear db and save, save in database
+        // if no post-hook exists: add
+        // else: complete post-hook to update gitdb
+
 
     }
 
@@ -63,12 +69,11 @@ class Init(var userHome: String, val appname: String) : Command {
     }
 
     fun createDb() {
-        val db = InitObject.dbPath(userHome)
-        db.toFile().createNewFile()
-
-        val createSql = InitObject.createSql
-        DriverManager.getConnection("jdbc:sqlite:$db").use { con ->
-            val stmt = con.prepareStatement(createSql)
+        val dbPath = InitObject.dbPath(userHome)
+        log.info("Creating DB in $dbPath")
+        dbPath.toFile().createNewFile()
+        DriverManager.getConnection("jdbc:sqlite:$dbPath").use { con ->
+            val stmt = con.prepareStatement(InitObject.createSql)
             stmt.execute()
         }
     }
@@ -82,19 +87,14 @@ class Init(var userHome: String, val appname: String) : Command {
         // create hooks
     }
 
-    fun processGitReposOnMachine() {
+    fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
-        val gitrepos = drives.flatMap { findGitReposInDrive(it) }
-        gitrepos.forEach { println(it) }
-        // D:\workspaces\web_practice\todo
-        //D:\workspaces\web_practice\webapp-runner
-        //E:\flask_learn\flask_project
-        //E:\tmp\docker_doodle\doodle
+        // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
+        //val gitrepos = drives.flatMap { findGitReposInDrive(it) }
+        // return gitrepos
 
-
-        // if no post-hook exists: add
-        // else: complete post-hook to update gitdb
-        // save in database
+        val someGitrepos = listOf("D:\\workspaces\\web_practice\\todo", "D:\\workspaces\\web_practice\\webapp-runner", "E:\\flask_learn\\flask_project", "E:\\tmp\\docker_doodle\\doodle")
+        return someGitrepos
     }
 
     internal fun findGitReposInDrive(drive: Path): List<Path> {
@@ -105,23 +105,18 @@ class Init(var userHome: String, val appname: String) : Command {
         val gitDirs: MutableList<Path> = ArrayList()
 
         val visitor = object : SimpleFileVisitor<Path>() {
-            override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-                if (File(dir!!.resolve(".git").toString()).isDirectory) {
-                    // println(dir.toString())
-                    gitDirs.add(dir)
-                    return FileVisitResult.SKIP_SUBTREE
-                } else {
-                    return FileVisitResult.CONTINUE
-                }
-            }
+            override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
+                    if (File(dir!!.resolve(".git").toString()).isDirectory) {
+                        gitDirs.add(dir)
+                        FileVisitResult.SKIP_SUBTREE
+                    } else {
+                        FileVisitResult.CONTINUE
+                    }
 
-            override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult {
-                return FileVisitResult.SKIP_SUBTREE
-            }
+            override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult = FileVisitResult.SKIP_SUBTREE
 
         }
         Files.walkFileTree(drive, options, depth, visitor)
-
         return gitDirs
     }
 }
