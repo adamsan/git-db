@@ -42,7 +42,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
             lines.forEach { count = Integer.parseInt(it) }
         }
 
-        println("Number of commits in repo: $dir = $count")
+        log.info("Number of commits in repo: $dir = $count")
         return count
     }
 
@@ -56,12 +56,12 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
             lines.forEach { timestamp = it.toLong() }
         }
 
-        println("Unix timestamp for last commit: $dir = $timestamp")
+        log.info("Unix timestamp for last commit: $dir = $timestamp")
         return timestamp
     }
 
     fun createGitDbDir(): Boolean {
-        log.info("$appname creates .git-db dir in user home directory: $userHome")
+        log.info("create .git-db dir in user home directory: $userHome")
         val userHomePath = Paths.get(userHome)
         val resolve = userHomePath.resolve(configDir)
         val f = File(resolve.toString())
@@ -70,7 +70,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
     fun createDb() {
         val dbPath = InitObject.dbPath(userHome)
-        log.info("Creating DB in $dbPath")
+        log.info("create DB in $dbPath")
         dbPath.toFile().createNewFile()
         DriverManager.getConnection("jdbc:sqlite:$dbPath").use { con ->
             val stmt = con.prepareStatement(InitObject.createSql)

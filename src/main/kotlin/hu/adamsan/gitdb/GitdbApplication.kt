@@ -62,30 +62,6 @@ class GitdbApplication : ApplicationRunner {
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
             else -> help.run()
         }
-
-        // repoDao.insert(Repo(Random().nextInt(100),"foobar", "c:/foobar", false, 3, Date.from(Instant.now())))
-
-        println("All repos")
-        println("--".repeat(10))
-        repoDao.getAll().forEach { println(it) }
-        println("--".repeat(10))
-
-        println("\nRepo by id: 24")
-        var repo24 = repoDao.findById(24).get()
-        println(repo24)
-        println("Update 24")
-        repo24.commits += 1
-        repoDao.update(repo24)
-
-        repo24 = repoDao.findById(24).get()
-        println(repo24)
-
-        println("\nRepo delete by id: 41")
-        println(repoDao.delete(41))
-
-        println("Find by not existing id:")
-        var repo = repoDao.findById(24222)
-        println(repo)
     }
 }
 
