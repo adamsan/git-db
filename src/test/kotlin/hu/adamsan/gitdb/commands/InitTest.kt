@@ -34,7 +34,9 @@ internal class InitTest {
 
     @Test
     fun assert_walks_through_filesystem() {
-        sut.processGitReposOnMachine()
+        sut.countCommits("D:\\workspaces\\web_practice\\todo")
+        sut.unixTimestampForLastCommit("D:\\workspaces\\web_practice\\todo")
+        // sut.processGitReposOnMachine()
     }
 
 

@@ -2,8 +2,10 @@ package hu.adamsan.gitdb.commands
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.io.InputStreamReader
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
@@ -21,7 +23,35 @@ class Init(var userHome: String, val appname: String) : Command {
         //TODO:
         gitConfigTemplateDir()
         createHooks()
+
         processGitReposOnMachine()
+
+    }
+
+    fun countCommits(dir: String) {
+        val command = "git rev-list @ --count"
+        val pb = ProcessBuilder(command.split(" "))
+        pb.directory(File(dir))
+        val p = pb.start()
+        var count = 0
+        p.inputStream.bufferedReader().useLines {
+            lines -> lines.forEach { count = Integer.parseInt(it) }
+        }
+
+        println("Number of commits in repo: $dir = $count")
+    }
+
+    fun unixTimestampForLastCommit(dir: String) {
+        val command = "git log -1 --format=%at"
+        val pb = ProcessBuilder(command.split(" "))
+        pb.directory(File(dir))
+        val p = pb.start()
+        var timestamp = 0
+        p.inputStream.bufferedReader().useLines {
+            lines -> lines.forEach { timestamp = Integer.parseInt(it) }
+        }
+
+        println("Unix timestamp for last commit: $dir = $timestamp")
 
     }
 
@@ -56,9 +86,13 @@ class Init(var userHome: String, val appname: String) : Command {
     fun processGitReposOnMachine() {
         val drives = FileSystems.getDefault().rootDirectories
         val gitrepos = drives.flatMap { findGitReposInDrive(it) }
-
         gitrepos.forEach { println(it) }
-        // search hard drives for .git dirs
+        // D:\workspaces\web_practice\todo
+        //D:\workspaces\web_practice\webapp-runner
+        //E:\flask_learn\flask_project
+        //E:\tmp\docker_doodle\doodle
+
+
         // if no post-hook exists: add
         // else: complete post-hook to update gitdb
         // save in database
