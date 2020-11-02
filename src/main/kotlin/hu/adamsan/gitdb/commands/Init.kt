@@ -2,10 +2,8 @@ package hu.adamsan.gitdb.commands
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.io.InputStreamReader
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
@@ -28,31 +26,32 @@ class Init(var userHome: String, val appname: String) : Command {
 
     }
 
-    fun countCommits(dir: String) {
+    fun countCommits(dir: String): Int {
         val command = "git rev-list @ --count"
         val pb = ProcessBuilder(command.split(" "))
         pb.directory(File(dir))
         val p = pb.start()
         var count = 0
-        p.inputStream.bufferedReader().useLines {
-            lines -> lines.forEach { count = Integer.parseInt(it) }
+        p.inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { count = Integer.parseInt(it) }
         }
 
         println("Number of commits in repo: $dir = $count")
+        return count
     }
 
-    fun unixTimestampForLastCommit(dir: String) {
+    fun unixTimestampForLastCommit(dir: String): Long {
         val command = "git log -1 --format=%at"
         val pb = ProcessBuilder(command.split(" "))
         pb.directory(File(dir))
         val p = pb.start()
-        var timestamp = 0
-        p.inputStream.bufferedReader().useLines {
-            lines -> lines.forEach { timestamp = Integer.parseInt(it) }
+        var timestamp = 0L
+        p.inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { timestamp = it.toLong() }
         }
 
         println("Unix timestamp for last commit: $dir = $timestamp")
-
+        return timestamp
     }
 
     fun createGitDbDir(): Boolean {
