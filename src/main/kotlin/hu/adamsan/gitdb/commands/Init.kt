@@ -1,5 +1,6 @@
 package hu.adamsan.gitdb.commands
 
+import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -8,6 +9,8 @@ import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Command {
@@ -24,12 +27,25 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
         val repos = findGitReposOnMachine()
 
+        clearTableAndSaveRepos(repos)
         // TODO:
         // clear db and save, save in database
         // if no post-hook exists: add
         // else: complete post-hook to update gitdb
 
 
+    }
+
+    private fun clearTableAndSaveRepos(repos: List<String>) {
+        repoDao.deleteAll()
+        repos.forEachIndexed { i, repo -> saveRepo(i + 1, repo) }
+    }
+
+    private fun saveRepo(ind: Int, dir: String) {
+        val name = Paths.get(dir).fileName.toString()
+        val lastCommitted = Date(unixTimestampForLastCommit(dir))
+        val repo = Repo(ind, name, dir, false, countCommits(dir), lastCommitted)
+        repoDao.insert(repo)
     }
 
     fun countCommits(dir: String): Int {
@@ -78,22 +94,26 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         }
     }
 
-    fun gitConfigTemplateDir() {
+    private fun gitConfigTemplateDir() {
         // edit .gitconfig:
         // git config --global init.templatedir %userprofile%/.git-db/.git-templates
     }
 
-    fun createHooks() {
+    private fun createHooks() {
         // create hooks
     }
 
-    fun findGitReposOnMachine(): List<String> {
+    private fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
         // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
         //val gitrepos = drives.flatMap { findGitReposInDrive(it) }
         // return gitrepos
 
-        val someGitrepos = listOf("D:\\workspaces\\web_practice\\todo", "D:\\workspaces\\web_practice\\webapp-runner", "E:\\flask_learn\\flask_project", "E:\\tmp\\docker_doodle\\doodle")
+        val someGitrepos = listOf(
+                "D:\\workspaces\\web_practice\\todo",
+                "D:\\workspaces\\web_practice\\webapp-runner",
+                "E:\\flask_learn\\flask_project",
+                "E:\\tmp\\docker_doodle\\doodle")
         return someGitrepos
     }
 
