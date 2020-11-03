@@ -10,11 +10,21 @@ internal class TableTest {
     fun render() {
         val t = Table()
         t.addHeader("id", "name", "path")
-        t.addRow("1", "foo", "foo-123-345-456-65756-757")
-        t.addRow("33", "bar", "foo-123-345-456-65756-757")
-        t.addRow("444", "foobarbaz", "foo-123-345-456-65756-757  24 234")
-        t.addRow("444", "foobarbaz0", "1234567890123456789012345678901234567890")
+        t.addRow(1, "foo", "foo-123-345-456-65756-757")
+        t.addRow(33, "bar", "foo-123-345-456-65756-757")
+        t.addRow(444, "foobarbaz", "foo-123-345-456-65756-757  24 234")
+        t.addRow(444, "foobarbaz0", "1234567890123456789012345678901234567890")
 
+        val expected =
+"""
+ id|   name   |                  path                  
+--------------------------------------------------------
+ 1 |    foo   |        foo-123-345-456-65756-757       
+ 33|    bar   |        foo-123-345-456-65756-757       
+444| foobarbaz|    foo-123-345-456-65756-757  24 234   
+444|foobarbaz0|1234567890123456789012345678901234567890
+""".trimIndent()
+        assertEquals(expected, t.render())
         println(t.render())
     }
 

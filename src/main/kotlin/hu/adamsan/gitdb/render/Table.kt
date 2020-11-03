@@ -20,7 +20,7 @@ class Table {
 
     fun addRow(row: List<String>) = data.add(row)
 
-    fun addRow(vararg values: String) = this.addRow(values.asList())
+    fun addRow(vararg values: Any) = this.addRow(values.asList().map { it.toString() })
 
     fun render(): String {
         val maxLengths = calculateMaxLengthsPerColumn()

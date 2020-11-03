@@ -23,12 +23,12 @@ class ListCommand(val userHome: String, val repoDao: RepoDao) {
         table.addHeader(" ID ", " NAME ", " PATH "," FAV "," COMMITS "," LAST COMMIT ")
 
         repos.forEach { row ->
-            table.addRow(row.id.toString(),
+            table.addRow(row.id,
                     row.name,
                     row.path,
                     if(row.favorite) "Y" else "N",
-                    row.commits.toString(),
-                    row.lastCommitted.toString()
+                    row.commits,
+                    row.lastCommitted
             )
         }
 
