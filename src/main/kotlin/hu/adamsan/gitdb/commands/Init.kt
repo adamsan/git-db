@@ -43,38 +43,10 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
     private fun saveRepo(ind: Int, dir: String) {
         val name = Paths.get(dir).fileName.toString()
-        val lastCommitted = unixTimestampForLastCommit(dir)?.let { Date(it*1000) }
+        val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
         log.info("$dir's last committed date: $lastCommitted")
-        val repo = Repo(ind, name, dir, false, countCommits(dir), lastCommitted)
+        val repo = Repo(ind, name, dir, false, InitObject.countCommits(dir), lastCommitted)
         repoDao.insert(repo)
-    }
-
-    fun countCommits(dir: String): Int {
-        val command = "git rev-list @ --count"
-        val pb = ProcessBuilder(command.split(" "))
-        pb.directory(File(dir))
-        val p = pb.start()
-        var count = 0
-        p.inputStream.bufferedReader().useLines { lines ->
-            lines.forEach { count = Integer.parseInt(it) }
-        }
-
-        log.info("Number of commits in repo: $dir = $count")
-        return count
-    }
-
-    fun unixTimestampForLastCommit(dir: String): Long? {
-        val command = "git log -1 --format=%at"
-        val pb = ProcessBuilder(command.split(" "))
-        pb.directory(File(dir))
-        val p = pb.start()
-        var timestamp: Long? = null//0L
-        p.inputStream.bufferedReader().useLines { lines ->
-            lines.forEach { timestamp = it.toLong() }
-        }
-
-        log.info("Unix timestamp for last commit: $dir = $timestamp")
-        return timestamp
     }
 
     fun createGitDbDir(): Boolean {
@@ -145,7 +117,39 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 }
 
 object InitObject {
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     fun dbPath(userHome: String): Path = Paths.get(userHome, ".git-db", ".repos.db")
+
+    fun countCommits(dir: String): Int {
+        val command = "git rev-list @ --count"
+        val pb = ProcessBuilder(command.split(" "))
+        pb.directory(File(dir))
+        val p = pb.start()
+        var count = 0
+        p.inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { count = Integer.parseInt(it) }
+        }
+
+        log.info("Number of commits in repo: $dir = $count")
+        return count
+    }
+
+    fun modifiedDateForLastCommit(dir: String): Date? = unixTimestampForLastCommit(dir)?.let { Date(it*1000) }
+
+    private fun unixTimestampForLastCommit(dir: String): Long? {
+        val command = "git log -1 --format=%at"
+        val pb = ProcessBuilder(command.split(" "))
+        pb.directory(File(dir))
+        val p = pb.start()
+        var timestamp: Long? = null//0L
+        p.inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { timestamp = it.toLong() }
+        }
+
+        log.info("Unix timestamp for last commit: $dir = $timestamp")
+        return timestamp
+    }
 
     val createSql = """CREATE TABLE IF NOT EXISTS REPO(
                                ID INT PRIMARY KEY     NOT NULL,
