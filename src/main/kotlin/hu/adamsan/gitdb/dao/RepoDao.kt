@@ -15,7 +15,10 @@ class RepoDao(val jdbi: Jdbi) {
                 rs.getString("PATH"),
                 rs.getBoolean("FAVORITE"),
                 rs.getInt("COMMITS"),
-                Date(rs.getLong("LAST_COMMITTED"))
+                if(rs.getLong("LAST_COMMITTED") != 0L)
+                    Date(rs.getLong("LAST_COMMITTED"))
+                else
+                    null
         )
     }
 
@@ -88,5 +91,5 @@ data class Repo(
         val path: String,
         var favorite: Boolean,
         var commits: Int,
-        var lastCommitted: Date
+        var lastCommitted: Date?
 )

@@ -43,7 +43,8 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
     private fun saveRepo(ind: Int, dir: String) {
         val name = Paths.get(dir).fileName.toString()
-        val lastCommitted = Date(unixTimestampForLastCommit(dir))
+        val lastCommitted = unixTimestampForLastCommit(dir)?.let { Date(it*1000) }
+        log.info("$dir's last committed date: $lastCommitted")
         val repo = Repo(ind, name, dir, false, countCommits(dir), lastCommitted)
         repoDao.insert(repo)
     }
@@ -62,12 +63,12 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         return count
     }
 
-    fun unixTimestampForLastCommit(dir: String): Long {
+    fun unixTimestampForLastCommit(dir: String): Long? {
         val command = "git log -1 --format=%at"
         val pb = ProcessBuilder(command.split(" "))
         pb.directory(File(dir))
         val p = pb.start()
-        var timestamp = 0L
+        var timestamp: Long? = null//0L
         p.inputStream.bufferedReader().useLines { lines ->
             lines.forEach { timestamp = it.toLong() }
         }
@@ -113,7 +114,9 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
                 "D:\\workspaces\\web_practice\\todo",
                 "D:\\workspaces\\web_practice\\webapp-runner",
                 "E:\\flask_learn\\flask_project",
-                "E:\\tmp\\docker_doodle\\doodle")
+                "E:\\tmp\\docker_doodle\\doodle",
+                "E:\\tmp\\dockert_test\\foobarX" // git repo with no commits
+        )
         return someGitrepos
     }
 
@@ -150,6 +153,6 @@ object InitObject {
                                PATH           TEXT     NOT NULL,
                                FAVORITE       INTEGER DEFAULT 0,
                                COMMITS        INTEGER DEFAULT 1,
-                               LAST_COMMITTED TEXT
+                               LAST_COMMITTED TEXT DEFAULT NULL
                             );""".trimIndent()
 }
