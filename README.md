@@ -28,6 +28,8 @@ creates and configures global templatedir `git config --global init.templatedir 
 - `gitdb unfavor <repo_id>` - unmark repository as favorite
 - `gitdb help` - prints help
 
+ - `gitdb update` - updates git repo in the current directory - used by git hooks
+
 ###Similar projects
 
 - https://github.com/MirkoLedda/git-summary/blob/master/git-summary

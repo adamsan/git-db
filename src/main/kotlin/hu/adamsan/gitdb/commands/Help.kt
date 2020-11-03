@@ -11,6 +11,8 @@ class Help : Command {
 			$name init - initializes the tool
 			$name list - lists all git repositories
 			$name cd <project_id> - changes directory to repository's directory
+
+            $name update - updates git repo on current directory - used by git hooks
 		""".trimIndent())
     }
 

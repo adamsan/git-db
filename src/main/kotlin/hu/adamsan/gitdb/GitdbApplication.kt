@@ -60,6 +60,7 @@ class GitdbApplication : ApplicationRunner {
             "init" -> Init(userHome, name, repoDao).run()
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
+            "update" -> UpdateCommand(userHome, repoDao).run()
             else -> help.run()
         }
     }

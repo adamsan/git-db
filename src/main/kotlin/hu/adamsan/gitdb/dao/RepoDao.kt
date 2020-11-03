@@ -76,6 +76,16 @@ class RepoDao(val jdbi: Jdbi) {
                     .execute()
         }
     }
+
+    fun findByPath(path: String): Optional<Repo>? {
+        val sql = "SELECT * FROM REPO WHERE path=:path"
+        return jdbi.withHandle<Optional<Repo>, Exception> { h ->
+            h.createQuery(sql)
+                    .bind("path", path)
+                    .map(mapper)
+                    .findFirst()
+        }
+    }
 }
 
 //CREATE TABLE IF NOT EXISTS REPO(
