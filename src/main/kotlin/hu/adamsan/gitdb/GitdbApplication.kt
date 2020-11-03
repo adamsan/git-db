@@ -58,7 +58,7 @@ class GitdbApplication : ApplicationRunner {
 
         when (command) {
             "init" -> Init(userHome, name, repoDao).run()
-            "list" -> Repos(userHome, repoDao).list(args?.sourceArgs?.drop(1));
+            "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
             "cd" -> ChangeDirectory(userHome).cd(args?.sourceArgs?.get(1))
             else -> help.run()
         }

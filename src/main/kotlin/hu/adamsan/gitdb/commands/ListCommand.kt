@@ -4,7 +4,7 @@ import hu.adamsan.gitdb.dao.RepoDao
 import hu.adamsan.gitdb.render.Table
 
 
-class Repos(val userHome: String, val repoDao: RepoDao) {
+class ListCommand(val userHome: String, val repoDao: RepoDao) {
 
 
     fun list(parameters: List<String>?) {
