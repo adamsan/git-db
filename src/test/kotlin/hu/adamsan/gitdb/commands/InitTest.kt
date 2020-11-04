@@ -42,7 +42,7 @@ internal class InitTest {
         val p = Paths.get("D:\\workspaces\\web_practice\\todo")
         val commits = InitObject.countCommits("D:\\workspaces\\web_practice\\todo")
         val date = InitObject.modifiedDateForLastCommit("D:\\workspaces\\web_practice\\todo")
-        val r = Repo(1,p.fileName.toString(), p.toString(), false, commits, date )
+        val r = Repo(1,p.fileName.toString(), p.toString(), false, commits, date, false)
         println(r)
 
 

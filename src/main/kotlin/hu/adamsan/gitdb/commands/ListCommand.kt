@@ -22,18 +22,19 @@ class ListCommand(val userHome: String, val repoDao: RepoDao) {
 
         val table = Table()
 
-        table.addHeader(" ID ", " NAME ", " PATH "," FAV "," COMMITS "," LAST COMMIT ")
+        table.addHeader(" ID ", " NAME ", " PATH "," FAV "," COMMITS "," LAST COMMIT ", " HAS_REMOTE ")
 
         repos.forEach { row ->
             table.addRow(row.id,
                     row.name,
                     row.path,
-                    if(row.favorite) "Y" else "N",
+                    if(row.favorite) "*" else "",
                     row.commits,
-                    row.lastCommitted
+                    row.lastCommitted,
+                    if(row.hasRemote) "*" else ""
             )
         }
 
-        println(table.render(listOf(RIGHT, LEFT, LEFT, CENTER, RIGHT, LEFT)))
+        println(table.render(listOf(RIGHT, LEFT, LEFT, CENTER, RIGHT, LEFT, CENTER)))
     }
 }

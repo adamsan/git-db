@@ -13,7 +13,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Command {
+class Init(var userHome: String, val appname: String, private val repoDao: RepoDao) : Command {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val configDir = ".git-db"
@@ -35,7 +35,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         val name = Paths.get(dir).fileName.toString()
         val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
         log.info("$dir's last committed date: $lastCommitted")
-        val repo = Repo(ind, name, dir, false, InitObject.countCommits(dir), lastCommitted)
+        val repo = Repo(ind, name, dir, false, InitObject.countCommits(dir), lastCommitted, InitObject.hasRemote(dir))
         repoDao.insert(repo)
     }
 
@@ -50,16 +50,12 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
     fun createDb() {
         val dbPath = InitObject.dbPath(userHome)
         log.info("create DB in $dbPath")
+        dbPath.toFile().delete()
         dbPath.toFile().createNewFile()
         DriverManager.getConnection("jdbc:sqlite:$dbPath").use { con ->
             val stmt = con.prepareStatement(InitObject.createSql)
             stmt.execute()
         }
-    }
-
-    private fun gitConfigTemplateDir() {
-        // edit .gitconfig:
-        // git config --global init.templatedir %userprofile%/.git-db/.git-templates
     }
 
     private fun createHooks() {
@@ -68,7 +64,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
     private fun createHook(repo: Repo) {
         val hookPath = Paths.get(repo.path).resolve(".git").resolve("hooks").resolve("post-commit")
-        if( hookPath.parent.toFile().isDirectory && !hookPath.toFile().isFile) {
+        if (hookPath.parent.toFile().isDirectory && !hookPath.toFile().isFile) {
             hookPath.toFile().createNewFile()
             hookPath.toFile().writeText("gitdb update ${repo.id}")
         }
@@ -99,18 +95,27 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
 
         val visitor = object : SimpleFileVisitor<Path>() {
             override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
-                    if (File(dir!!.resolve(".git").toString()).isDirectory) {
-                        log.info("Found .git in $dir")
-                        gitDirs.add(dir)
-                        FileVisitResult.SKIP_SUBTREE
-                    } else if(isDotHiddenDir(dir)) {
-                        FileVisitResult.SKIP_SUBTREE
-                    } else {
-                        FileVisitResult.CONTINUE
+                    when {
+                        File(dir!!.resolve(".git").toString()).isDirectory -> {
+                            log.info("Found .git in $dir")
+                            gitDirs.add(dir)
+                            FileVisitResult.SKIP_SUBTREE
+                        }
+                        isDotHiddenDir(dir) || isRecycleBin(dir) -> {
+                            FileVisitResult.SKIP_SUBTREE
+                        }
+                        else -> {
+                            FileVisitResult.CONTINUE
+                        }
                     }
 
-            private fun isDotHiddenDir(dir: Path) =
-                    dir.toFile().isDirectory && dir.fileName.toString().startsWith(".")
+            private fun isRecycleBin(dir: Path): Boolean {
+                return dir.toFile().isDirectory && "\$RECYCLE.BIN" == dir.fileName?.toString()
+            }
+
+            private fun isDotHiddenDir(dir: Path): Boolean {
+                return dir.toFile().isDirectory && dir.fileName?.toString()?.startsWith(".") ?: false
+            }
 
             override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult = FileVisitResult.SKIP_SUBTREE
 
@@ -139,7 +144,15 @@ object InitObject {
         return count
     }
 
-    fun modifiedDateForLastCommit(dir: String): Date? = unixTimestampForLastCommit(dir)?.let { Date(it*1000) }
+    fun modifiedDateForLastCommit(dir: String): Date? = unixTimestampForLastCommit(dir)?.let { Date(it * 1000) }
+
+    fun hasRemote(dir: String): Boolean {
+        val command = "git remote -v"
+        val p = ProcessBuilder(command.split(" ")).directory(File(dir)).start()
+        p.inputStream.bufferedReader().useLines { lines ->
+            return lines.any { it -> it.contains("origin") }
+        }
+    }
 
     private fun unixTimestampForLastCommit(dir: String): Long? {
         val command = "git log -1 --format=%at"
@@ -161,6 +174,7 @@ object InitObject {
                                PATH           TEXT     NOT NULL,
                                FAVORITE       INTEGER DEFAULT 0,
                                COMMITS        INTEGER DEFAULT 1,
-                               LAST_COMMITTED TEXT DEFAULT NULL
+                               LAST_COMMITTED TEXT DEFAULT NULL,
+                               HAS_REMOTE     INTEGER DEFAULT 0
                             );""".trimIndent()
 }

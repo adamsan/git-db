@@ -18,7 +18,8 @@ class RepoDao(val jdbi: Jdbi) {
                 if(rs.getLong("LAST_COMMITTED") != 0L)
                     Date(rs.getLong("LAST_COMMITTED"))
                 else
-                    null
+                    null,
+                rs.getBoolean("HAS_REMOTE")
         )
     }
 
@@ -41,7 +42,7 @@ class RepoDao(val jdbi: Jdbi) {
     }
 
     fun insert(repo: Repo) {
-        val sql = "INSERT INTO REPO VALUES (:id, :name, :path, :favorite, :commits, :lastCommitted)"
+        val sql = "INSERT INTO REPO VALUES (:id, :name, :path, :favorite, :commits, :lastCommitted, :hasRemote)"
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
                     .bindBean(repo)
@@ -51,7 +52,7 @@ class RepoDao(val jdbi: Jdbi) {
 
     fun update(repo: Repo) {
         val sql = "UPDATE REPO " +
-                "SET name=:name, path=:path, favorite=:favorite, commits=:commits, last_committed= :lastCommitted " +
+                "SET name=:name, path=:path, favorite=:favorite, commits=:commits, last_committed= :lastCommitted, has_remote=:hasRemote " +
                 "WHERE id= :id"
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
@@ -101,5 +102,6 @@ data class Repo(
         val path: String,
         var favorite: Boolean,
         var commits: Int,
-        var lastCommitted: Date?
+        var lastCommitted: Date?,
+        var hasRemote: Boolean = false
 )

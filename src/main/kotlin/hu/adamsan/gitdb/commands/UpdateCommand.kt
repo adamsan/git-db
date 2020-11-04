@@ -17,7 +17,9 @@ class UpdateCommand(val userHome: String, val  repoDao: RepoDao) {
             log.info("updating $repo")
             repo.commits = InitObject.countCommits(repo.path)
             repo.lastCommitted = InitObject.modifiedDateForLastCommit(repo.path)
+            repo.hasRemote = InitObject.hasRemote(repo.path)
             log.info("updated: $repo")
+            log.info("repo has remote: ${InitObject.hasRemote(repo.path)}" )
             repoDao.update(repo)
         }
     }
