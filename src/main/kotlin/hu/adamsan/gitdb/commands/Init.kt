@@ -22,7 +22,6 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         createGitDbDir()
         createDb()
 
-        gitConfigTemplateDir() //TODO
         createHooks() //TODO
 
         val repos = findGitReposOnMachine()
@@ -30,8 +29,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         clearTableAndSaveRepos(repos)
         // TODO:
         // clear db and save, save in database
-        // if no post-hook exists: add
-        // else: complete post-hook to update gitdb
+        // complete post-hook to update gitdb
 
 
     }
@@ -79,22 +77,22 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
     private fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
         // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
-        //val gitrepos = drives.flatMap { findGitReposInDrive(it) }
-        // return gitrepos
+        val gitrepos = drives.flatMap { findGitReposInDrive(it) }.map { it.toString() }
+        return gitrepos
 
-        val someGitrepos = listOf(
-                "D:\\workspaces\\web_practice\\todo",
-                "D:\\workspaces\\web_practice\\webapp-runner",
-                "E:\\flask_learn\\flask_project",
-                "E:\\tmp\\docker_doodle\\doodle",
-                "E:\\tmp\\dockert_test\\foobarX" // git repo with no commits
-        )
-        return someGitrepos
+//        val someGitrepos = listOf(
+//                "D:\\workspaces\\web_practice\\todo",
+//                "D:\\workspaces\\web_practice\\webapp-runner",
+//                "E:\\flask_learn\\flask_project",
+//                "E:\\tmp\\docker_doodle\\doodle",
+//                "E:\\tmp\\dockert_test\\foobarX" // git repo with no commits
+//        )
+//        return someGitrepos
     }
 
-    internal fun findGitReposInDrive(drive: Path): List<Path> {
+    private fun findGitReposInDrive(drive: Path): List<Path> {
         log.info("Start processing drive: $drive")
-        val depth = 4
+        val depth = 8
 
         val options: Set<FileVisitOption> = setOf(FileVisitOption.FOLLOW_LINKS)
         val gitDirs: MutableList<Path> = ArrayList()
@@ -102,6 +100,7 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
         val visitor = object : SimpleFileVisitor<Path>() {
             override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
                     if (File(dir!!.resolve(".git").toString()).isDirectory) {
+                        log.info("Found .git in $dir")
                         gitDirs.add(dir)
                         FileVisitResult.SKIP_SUBTREE
                     } else {
