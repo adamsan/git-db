@@ -1,6 +1,8 @@
 package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.RepoDao
+import hu.adamsan.gitdb.render.Align
+import hu.adamsan.gitdb.render.Align.*
 import hu.adamsan.gitdb.render.Table
 
 
@@ -32,6 +34,6 @@ class ListCommand(val userHome: String, val repoDao: RepoDao) {
             )
         }
 
-        println(table.render())
+        println(table.render(listOf(RIGHT, LEFT, LEFT, CENTER, RIGHT, LEFT)))
     }
 }

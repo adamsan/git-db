@@ -12,7 +12,7 @@ class Table {
 
     var data: MutableList<List<String>> = ArrayList()
 
-    fun addHeader(header: List<String>)  {
+    fun addHeader(header: List<String>) {
         this.header = header
     }
 
@@ -44,10 +44,46 @@ class Table {
         return lengths.fold(headerMaxLengths, { acc, lengths -> acc.zip(lengths).map { a -> max(a.first, a.second) } })
     }
 
-    fun printMiddle(string: String, len:Int, paddingChar: Char = ' '): String {
+    fun printMiddle(string: String, len: Int, paddingChar: Char = ' '): String {
         val d = (len - string.length) / 2.0
         val before = "$paddingChar".repeat(ceil(d).toInt())
         val after = "$paddingChar".repeat(floor(d).toInt())
         return before + string + after
     }
+
+    fun printLeft(string: String, len: Int, paddingChar: Char = ' '): String {
+        val after = "$paddingChar".repeat(len - string.length)
+        return string + after
+    }
+
+    fun printRight(string: String, len: Int, paddingChar: Char = ' '): String {
+        val before = "$paddingChar".repeat(len - string.length)
+        return before + string
+    }
+
+    fun render(alignments: List<Align>): String {
+        val maxLengths = calculateMaxLengthsPerColumn()
+        val headerLine = maxLengths.zip(header)
+                .map { p -> printMiddle(p.second, p.first) }
+                .joinToString("|")
+        val bodyLines = data.map { row ->
+            maxLengths.zip(row).zip(alignments)
+                    .map { p ->
+                        when (p.second) {
+                            Align.CENTER -> printMiddle(p.first.second, p.first.first)
+                            Align.RIGHT -> printRight(p.first.second, p.first.first)
+                            Align.LEFT -> printLeft(p.first.second, p.first.first)
+                        }
+                    }
+                    .joinToString("|")
+        }
+        return headerLine +
+                "\n" +
+                "-".repeat(maxLengths.sum() + maxLengths.size) +
+                "\n" + bodyLines.joinToString("\n")
+    }
+}
+
+enum class Align {
+    LEFT, CENTER, RIGHT
 }
