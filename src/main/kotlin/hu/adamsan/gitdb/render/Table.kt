@@ -41,7 +41,7 @@ class Table {
     private fun calculateMaxLengthsPerColumn(): List<Int> {
         val headerMaxLengths = header.map { it.length }
         val lengths = data.map { rows -> rows.map { it.length } }
-        return lengths.fold(headerMaxLengths, { acc, lengths -> acc.zip(lengths).map { a -> max(a.first, a.second) } })
+        return lengths.fold(headerMaxLengths, { acc, rowLengths -> acc.zip(rowLengths).map { a -> max(a.first, a.second) } })
     }
 
     fun printMiddle(string: String, len: Int, paddingChar: Char = ' '): String {

@@ -21,17 +21,9 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
     override fun run() {
         createGitDbDir()
         createDb()
-
-        createHooks() //TODO
-
         val repos = findGitReposOnMachine()
-
         clearTableAndSaveRepos(repos)
-        // TODO:
-        // clear db and save, save in database
-        // complete post-hook to update gitdb
-
-
+        createHooks()
     }
 
     private fun clearTableAndSaveRepos(repos: List<String>) {
@@ -71,7 +63,15 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
     }
 
     private fun createHooks() {
-        // create hooks
+        repoDao.getAll().forEach { createHook(it) }
+    }
+
+    private fun createHook(repo: Repo) {
+        val hookPath = Paths.get(repo.path).resolve(".git").resolve("hooks").resolve("post-commit")
+        if( hookPath.parent.toFile().isDirectory && !hookPath.toFile().isFile) {
+            hookPath.toFile().createNewFile()
+            hookPath.toFile().writeText("gitdb update ${repo.id}")
+        }
     }
 
     private fun findGitReposOnMachine(): List<String> {
@@ -103,9 +103,14 @@ class Init(var userHome: String, val appname: String, val repoDao: RepoDao) : Co
                         log.info("Found .git in $dir")
                         gitDirs.add(dir)
                         FileVisitResult.SKIP_SUBTREE
+                    } else if(isDotHiddenDir(dir)) {
+                        FileVisitResult.SKIP_SUBTREE
                     } else {
                         FileVisitResult.CONTINUE
                     }
+
+            private fun isDotHiddenDir(dir: Path) =
+                    dir.toFile().isDirectory && dir.fileName.toString().startsWith(".")
 
             override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult = FileVisitResult.SKIP_SUBTREE
 
