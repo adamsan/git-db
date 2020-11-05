@@ -1,6 +1,5 @@
 package hu.adamsan.gitdb.dao
 
-import hu.adamsan.gitdb.commands.InitObject
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.mapper.RowMapper
 import org.springframework.stereotype.Repository
@@ -89,13 +88,6 @@ class RepoDao(val jdbi: Jdbi) {
     }
 }
 
-//CREATE TABLE IF NOT EXISTS REPO(
-//                               ID INT PRIMARY KEY     NOT NULL,
-//                               NAME           TEXT    NOT NULL,
-//                               PATH           TEXT     NOT NULL,
-//                               FAVORITE       INTEGER DEFAULT 0,
-//                               COMMITS        INTEGER DEFAULT 1,
-//                               LAST_COMMITTED TEXT
 data class Repo(
         val id: Int,
         val name: String,

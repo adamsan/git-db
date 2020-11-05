@@ -19,11 +19,23 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
     private val configDir = ".git-db"
 
     override fun run() {
+        if(!confirmRun()) {
+            return
+        }
         createGitDbDir()
         createDb()
         val repos = findGitReposOnMachine()
         clearTableAndSaveRepos(repos)
         createHooks()
+    }
+
+    private fun confirmRun(): Boolean {
+        if (InitObject.dbPath(userHome).toFile().exists()) {
+            println("Database already exists. This will recreate it Are you sure you want to continue? (Y/N)")
+        } else {
+            println("This will initialize database, but it can take long (~30 min). Are you sure you want to continue? (Y/N)")
+        }
+        return readLine()!!.toUpperCase().startsWith("Y")
     }
 
     private fun clearTableAndSaveRepos(repos: List<String>) {
