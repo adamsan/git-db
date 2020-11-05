@@ -31,7 +31,7 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
 
     private fun confirmRun(): Boolean {
         if (InitObject.dbPath(userHome).toFile().exists()) {
-            println("Database already exists. This will recreate it Are you sure you want to continue? (Y/N)")
+            println("Database already exists. This will recreate it. Are you sure you want to continue? (Y/N)")
         } else {
             println("This will initialize database, but it can take long (~30 min). Are you sure you want to continue? (Y/N)")
         }
@@ -186,7 +186,7 @@ object InitObject {
     val createSql = """CREATE TABLE IF NOT EXISTS REPO(
                                ID INT PRIMARY KEY     NOT NULL,
                                NAME           TEXT    NOT NULL,
-                               PATH           TEXT     NOT NULL,
+                               PATH           TEXT     NOT NULL UNIQUE,
                                FAVORITE       INTEGER DEFAULT 0,
                                COMMITS        INTEGER DEFAULT 1,
                                LAST_COMMITTED TEXT DEFAULT NULL,

@@ -22,6 +22,14 @@ class RepoDao(val jdbi: Jdbi) {
         )
     }
 
+    fun getUnusedIndex(): Int {
+        return 1 + jdbi.withHandle<Int, Exception> {h ->
+            h.select("SELECT MAX(ID) FROM REPO")
+                    .mapTo(Int::class.java)
+                    .one()
+        }
+    }
+
     fun getAll(): List<Repo> {
         return jdbi.withHandle<List<Repo>, Exception> { h ->
             h.select("SELECT * FROM REPO")
