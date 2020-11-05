@@ -13,6 +13,10 @@ class UpdateCommand(val userHome: String, val  repoDao: RepoDao) {
 
     fun updateForId(args: List<String>?) {
         val id = args!![0].toInt()
+
+        val dir = System.getProperty("user.dir")
+        log.info("Current working directory: $dir")
+
         repoDao.findById(id).map { repo ->
             log.info("updating $repo")
             repo.commits = InitObject.countCommits(repo.path)

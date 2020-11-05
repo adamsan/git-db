@@ -113,6 +113,9 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
                 return dir.toFile().isDirectory && "\$RECYCLE.BIN" == dir.fileName?.toString()
             }
 
+            /**
+             * .vim/ .cookiecutters/ .jenkins/
+             */
             private fun isDotHiddenDir(dir: Path): Boolean {
                 return dir.toFile().isDirectory && dir.fileName?.toString()?.startsWith(".") ?: false
             }
