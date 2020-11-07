@@ -10,22 +10,27 @@ import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
 import java.util.*
+import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 
-class Init(var userHome: String, val appname: String, private val repoDao: RepoDao) : Command {
+class Init(var userHome: String, val appname: String, private val repoDao: RepoDao) {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val configDir = ".git-db"
 
-    override fun run() {
+    fun init(parameters: List<String>?) {
         if (!confirmRun()) {
             return
         }
         createGitDbDir()
         createDb()
         createGitConfigInitTemplateDir()
-        val repoDirs = findGitReposOnMachine()
+        val repoDirs = if(parameters.isNullOrEmpty() || "quick" != parameters[0])
+            findGitReposOnMachine()
+        else
+            findGitReposOnMachineByExistingDbRoots()
+
         val repos = clearTableAndSaveRepos(repoDirs)
         repos.forEach { createHook(it) }
     }
@@ -94,22 +99,27 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
         writePostCommitHooks(Paths.get(repo.path, ".git").toAbsolutePath().toString(), repo.id)
     }
 
+    private fun findGitReposOnMachineByExistingDbRoots(): List<String> {
+        val workspaces = repoDao.getAll().stream().map { Paths.get(it.path).parent }.collect(Collectors.toSet())
+        return workspaces.flatMap { findGitReposIn(it) }.map { it.toString() }.distinct()
+    }
+
     private fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
         // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
-        // return drives.flatMap { findGitReposInDrive(it) }.map { it.toString() }
+         return drives.flatMap { findGitReposIn(it) }.map { it.toString() }
 
-        val someGitrepos = listOf(
-                "D:\\workspaces\\web_practice\\todo",
-                "D:\\workspaces\\web_practice\\webapp-runner",
-                "E:\\flask_learn\\flask_project",
-                "E:\\tmp\\docker_doodle\\doodle"
-        )
-        return someGitrepos
+//        val someGitrepos = listOf(
+//                "D:\\workspaces\\web_practice\\todo",
+//                "D:\\workspaces\\web_practice\\webapp-runner",
+//                "E:\\flask_learn\\flask_project",
+//                "E:\\tmp\\docker_doodle\\doodle"
+//        )
+//        return someGitrepos
     }
 
-    private fun findGitReposInDrive(drive: Path): List<Path> {
-        log.info("Start processing drive: $drive")
+    private fun findGitReposIn(path: Path): List<Path> {
+        log.info("Start processing: $path")
         val depth = 8
 
         val options: Set<FileVisitOption> = setOf(FileVisitOption.FOLLOW_LINKS)
@@ -145,7 +155,7 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
             override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult = FileVisitResult.SKIP_SUBTREE
 
         }
-        Files.walkFileTree(drive, options, depth, visitor)
+        Files.walkFileTree(path, options, depth, visitor)
         return gitDirs
     }
 }
@@ -165,7 +175,6 @@ object InitObject {
             lines.forEach { count = Integer.parseInt(it) }
         }
 
-        log.info("Number of commits in repo: $dir = $count")
         return count
     }
 
@@ -188,8 +197,6 @@ object InitObject {
         p.inputStream.bufferedReader().useLines { lines ->
             lines.forEach { timestamp = it.toLong() }
         }
-
-        log.info("Unix timestamp for last commit: $dir = $timestamp")
         return timestamp
     }
 

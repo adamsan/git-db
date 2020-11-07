@@ -22,6 +22,7 @@ You can find and list all the repositories on your machine, or your most recent 
 
 - `gitdb init` - creates database, starts scan on all drives for directories containing `.git` folder.
  Creates and configures global templatedir `git config --global init.templatedir %userprofile%/.git-templates`.
+- `gitdb init quick` - same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing.  
 Adds a post-commit git hook to all repos with an `update <id>` call. 
 - `gitdb list` - lists .git repositories on your machine from it's database
 - `gitdb cd <repo_id>` - change directory to repository identified by id (number / sha / project name)

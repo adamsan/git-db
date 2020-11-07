@@ -8,11 +8,12 @@ class Help : Command {
 			
 			Usage:			
 			$name help - prints this message
-			$name init - initializes the tool
+			$name init - initializes the tool - scans all drives, ignores hidden directories
+            $name init quick - initializes the tool by scanning the parents of the repos already stored in db
 			$name list - lists all git repositories
 			$name cd <project_id> - changes directory to repository's directory
 
-            $name update - updates git repo on current directory - used by git hooks
+            $name update <project_id | 0>- updates git repo on current directory - used by git hooks
 		""".trimIndent())
     }
 

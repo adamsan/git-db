@@ -57,7 +57,7 @@ class GitdbApplication : ApplicationRunner {
 
 
         when (command) {
-            "init" -> Init(userHome, name, repoDao).run()
+            "init" -> Init(userHome, name, repoDao).init(args?.sourceArgs?.drop(1))
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
             "cd" -> ChangeDirectory(userHome, repoDao).cd(args?.sourceArgs?.get(1)) // cd should be implemented in bat files?
             "update" -> UpdateCommand(userHome, repoDao).updateForId(args?.sourceArgs?.drop(1))

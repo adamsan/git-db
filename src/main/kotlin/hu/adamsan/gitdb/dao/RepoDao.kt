@@ -82,6 +82,7 @@ class RepoDao(val jdbi: Jdbi) {
     }
 
     fun deleteAll() {
+        log.info("deleting all records from REPO table")
         var sql = "DELETE FROM REPO"
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
