@@ -61,16 +61,6 @@ class RepoDao(val jdbi: Jdbi) {
         }
     }
 
-    fun insertAll(repos: List<Repo>) {
-        log.info("insert $repos to db")
-        val sql = "INSERT INTO REPO VALUES (:id, :name, :path, :favorite, :commits, :lastCommitted, :hasRemote)"
-        jdbi.withHandle<IntArray, Exception> { h ->
-            val batch = h.prepareBatch(sql)
-            repos.forEach { batch.bindBean(it) }
-            batch.execute()
-        }
-    }
-
     fun update(repo: Repo) {
         val sql = "UPDATE REPO " +
                 "SET name=:name, path=:path, favorite=:favorite, commits=:commits, last_committed= :lastCommitted, has_remote=:hasRemote " +

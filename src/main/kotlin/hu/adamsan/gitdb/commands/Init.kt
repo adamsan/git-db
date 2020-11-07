@@ -60,10 +60,8 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
 
     private fun clearTableAndSaveRepos(repoPaths: List<String>): List<Repo> {
         repoDao.deleteAll()
-//      repoPaths.forEachIndexed { i, path -> saveRepo(i + 1, path) }
         val repos = repoPaths.mapIndexed { i, path -> repoFromPath(i + 1, path) }
-        //repos.forEach { repoDao.insert(it) }
-        repoDao.insertAll(repos)
+        repos.forEach { repoDao.insert(it) }
         return repos
     }
 
@@ -99,17 +97,15 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
     private fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
         // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
-        val gitrepos = drives.flatMap { findGitReposInDrive(it) }.map { it.toString() }
-        return gitrepos
+        // return drives.flatMap { findGitReposInDrive(it) }.map { it.toString() }
 
-//        val someGitrepos = listOf(
-//                "D:\\workspaces\\web_practice\\todo",
-//                "D:\\workspaces\\web_practice\\webapp-runner",
-//                "E:\\flask_learn\\flask_project",
-//                "E:\\tmp\\docker_doodle\\doodle",
-//                "E:\\tmp\\dockert_test\\foobarX" // git repo with no commits
-//        )
-//        return someGitrepos
+        val someGitrepos = listOf(
+                "D:\\workspaces\\web_practice\\todo",
+                "D:\\workspaces\\web_practice\\webapp-runner",
+                "E:\\flask_learn\\flask_project",
+                "E:\\tmp\\docker_doodle\\doodle"
+        )
+        return someGitrepos
     }
 
     private fun findGitReposInDrive(drive: Path): List<Path> {
