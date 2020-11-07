@@ -38,9 +38,20 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
         return readLine()!!.toUpperCase().startsWith("Y")
     }
 
-    private fun clearTableAndSaveRepos(repos: List<String>) {
+    private fun clearTableAndSaveRepos(repoPaths: List<String>) {
         repoDao.deleteAll()
-        repos.forEachIndexed { i, repo -> saveRepo(i + 1, repo) }
+//      repoPaths.forEachIndexed { i, path -> saveRepo(i + 1, path) }
+        val repos = repoPaths.mapIndexed { i, path -> repoFromPath(i + 1, path) }
+        repoDao.insertAll(repos)
+
+    }
+
+    private fun repoFromPath(id: Int, dir: String): Repo {
+        val name = Paths.get(dir).fileName.toString()
+        val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
+        log.info("$dir's last committed date: $lastCommitted")
+        val repo = Repo(id, name, dir, false, InitObject.countCommits(dir), lastCommitted, InitObject.hasRemote(dir))
+        return repo
     }
 
     private fun saveRepo(ind: Int, dir: String) {

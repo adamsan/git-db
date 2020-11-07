@@ -2,11 +2,14 @@ package hu.adamsan.gitdb.dao
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.mapper.RowMapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
 class RepoDao(val jdbi: Jdbi) {
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     private val mapper: RowMapper<Repo> = RowMapper { rs, _ ->
         Repo(
                 rs.getInt("ID"),
@@ -14,7 +17,7 @@ class RepoDao(val jdbi: Jdbi) {
                 rs.getString("PATH"),
                 rs.getBoolean("FAVORITE"),
                 rs.getInt("COMMITS"),
-                if(rs.getLong("LAST_COMMITTED") != 0L)
+                if (rs.getLong("LAST_COMMITTED") != 0L)
                     Date(rs.getLong("LAST_COMMITTED"))
                 else
                     null,
@@ -23,7 +26,7 @@ class RepoDao(val jdbi: Jdbi) {
     }
 
     fun getUnusedIndex(): Int {
-        return 1 + jdbi.withHandle<Int, Exception> {h ->
+        return 1 + jdbi.withHandle<Int, Exception> { h ->
             h.select("SELECT MAX(ID) FROM REPO")
                     .mapTo(Int::class.java)
                     .one()
@@ -49,11 +52,22 @@ class RepoDao(val jdbi: Jdbi) {
     }
 
     fun insert(repo: Repo) {
+        log.info("insert $repo to db")
         val sql = "INSERT INTO REPO VALUES (:id, :name, :path, :favorite, :commits, :lastCommitted, :hasRemote)"
         jdbi.withHandle<Int, Exception> { h ->
             h.createUpdate(sql)
                     .bindBean(repo)
                     .execute()
+        }
+    }
+
+    fun insertAll(repos: List<Repo>) {
+        log.info("insert $repos to db")
+        val sql = "INSERT INTO REPO VALUES (:id, :name, :path, :favorite, :commits, :lastCommitted, :hasRemote)"
+        jdbi.withHandle<IntArray, Exception> { h ->
+            val batch = h.prepareBatch(sql)
+            repos.forEach { batch.bindBean(it) }
+            batch.execute()
         }
     }
 

@@ -20,8 +20,9 @@ You can find and list all the repositories on your machine, or your most recent 
 
 ###Commands:
 
-- `gitdb init` - creates database, starts scan on all drives for directories containing `.git` folder,
-adds a post-commit git hook to all repos with an `update <id>` call. 
+- `gitdb init` - creates database, starts scan on all drives for directories containing `.git` folder.
+ Creates and configures global templatedir `git config --global init.templatedir %userprofile%/.git-templates`.
+Adds a post-commit git hook to all repos with an `update <id>` call. 
 - `gitdb list` - lists .git repositories on your machine from it's database
 - `gitdb cd <repo_id>` - change directory to repository identified by id (number / sha / project name)
 - `gitdb favor <repo_id>` - mark repository as favorite
