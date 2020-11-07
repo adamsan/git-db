@@ -23,7 +23,7 @@ class UpdateCommand(val userHome: String, val repoDao: RepoDao) {
         repoDao.findById(id).map { repo ->
             log.info("updating $repo")
             repo.commits = InitObject.countCommits(repo.path)
-            repo.lastCommitted = InitObject.modifiedDateForLastCommit(repo.path)
+            repo.lastCommitted = InitObject.lastCommitDate(repo.path)
             repo.hasRemote = InitObject.hasRemote(repo.path)
             log.info("updated: $repo")
             repoDao.update(repo)
@@ -58,7 +58,7 @@ class UpdateCommand(val userHome: String, val repoDao: RepoDao) {
     }
 
     private fun insertOrUpdateRepoInDb(dir: String): Int {
-        val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
+        val lastCommitted = InitObject.lastCommitDate(dir)
         val commits = InitObject.countCommits(dir)
         val hasRemote = InitObject.hasRemote(dir)
         val name = Paths.get(dir).fileName.toString()

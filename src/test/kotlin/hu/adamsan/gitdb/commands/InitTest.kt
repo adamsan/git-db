@@ -9,7 +9,6 @@ import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mockito
 import java.io.File
 import java.nio.file.*
-import java.util.*
 
 internal class InitTest {
 
@@ -41,7 +40,7 @@ internal class InitTest {
 
         val p = Paths.get("D:\\workspaces\\web_practice\\todo")
         val commits = InitObject.countCommits("D:\\workspaces\\web_practice\\todo")
-        val date = InitObject.modifiedDateForLastCommit("D:\\workspaces\\web_practice\\todo")
+        val date = InitObject.lastCommitDate("D:\\workspaces\\web_practice\\todo")
         val r = Repo(1,p.fileName.toString(), p.toString(), false, commits, date, false)
         println(r)
 

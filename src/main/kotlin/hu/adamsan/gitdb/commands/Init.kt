@@ -19,14 +19,62 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
     private val configDir = ".git-db"
 
     override fun run() {
-        if(!confirmRun()) {
+        if (!confirmRun()) {
             return
         }
         createGitDbDir()
         createDb()
-        val repos = findGitReposOnMachine()
-        clearTableAndSaveRepos(repos)
-        createHooks()
+        createGitConfigInitTemplateDir()
+        val repoDirs = findGitReposOnMachine()
+        val repos = clearTableAndSaveRepos(repoDirs)
+        repos.forEach { createHook(it) }
+    }
+
+    private fun createGitConfigInitTemplateDir() {
+        // git config --global init.templatedir %userprofile%/.git-templates
+        val gitTemplatePath = "$userHome/.git-db/.git-templates"
+        val command = "git config --global init.templatedir $gitTemplatePath"
+        ProcessBuilder(command.split(" ")).start()
+
+//        val target = Paths.get(gitTemplatePath).toFile()
+        val hooks = Paths.get(gitTemplatePath, "hooks").toFile()
+        if (!hooks.exists())
+            hooks.mkdirs()
+
+        writePostCommitHooks(gitTemplatePath)
+        return
+//        // copy files from resources
+//
+//        println("xxxxxxxxxxxxx")
+//        println(javaClass.protectionDomain.codeSource.location)
+//        println("xxxxxxxxxxxxx")
+//
+//
+//        // doesn't work, if running from a jar:
+//        // jar:file:/D:/Java/gitdb_testinstall/gitdb-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/git-templates
+//        val resourceName = "/git-templates"
+//        val resource = javaClass.getResource(resourceName)
+//        println(resource)
+//        val uri = resource.toURI()
+//        println("URI ------------------------> $uri")
+//
+//        val env = mutableMapOf<String, String>(Pair("create", "true") )
+//        FileSystems.newFileSystem(uri, env)
+//
+//        val source = Paths.get(uri);
+//        println(source)
+//        println("*".repeat(20))
+//
+//        val toFile = source.toFile()
+//        println(toFile)
+//        toFile.copyRecursively(target)
+    }
+
+    private fun writePostCommitHooks(gitDir: String, id: Int = 0) {
+        val postCommit = Paths.get(gitDir, "hooks", "post-commit").toFile()
+        postCommit.writeText("#!/bin/sh\ngitdb update $id\n")
+        val postCommitBat = Paths.get(gitDir, "hooks", "post-commit.bat").toFile()
+        postCommitBat.writeText("gitdb update $id\n")
     }
 
     private fun confirmRun(): Boolean {
@@ -38,28 +86,19 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
         return readLine()!!.toUpperCase().startsWith("Y")
     }
 
-    private fun clearTableAndSaveRepos(repoPaths: List<String>) {
+    private fun clearTableAndSaveRepos(repoPaths: List<String>): List<Repo> {
         repoDao.deleteAll()
 //      repoPaths.forEachIndexed { i, path -> saveRepo(i + 1, path) }
         val repos = repoPaths.mapIndexed { i, path -> repoFromPath(i + 1, path) }
+        //repos.forEach { repoDao.insert(it) }
         repoDao.insertAll(repos)
-
+        return repos
     }
 
     private fun repoFromPath(id: Int, dir: String): Repo {
         val name = Paths.get(dir).fileName.toString()
-        val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
-        log.info("$dir's last committed date: $lastCommitted")
-        val repo = Repo(id, name, dir, false, InitObject.countCommits(dir), lastCommitted, InitObject.hasRemote(dir))
-        return repo
-    }
-
-    private fun saveRepo(ind: Int, dir: String) {
-        val name = Paths.get(dir).fileName.toString()
-        val lastCommitted = InitObject.modifiedDateForLastCommit(dir)
-        log.info("$dir's last committed date: $lastCommitted")
-        val repo = Repo(ind, name, dir, false, InitObject.countCommits(dir), lastCommitted, InitObject.hasRemote(dir))
-        repoDao.insert(repo)
+        val lastCommitted = InitObject.lastCommitDate(dir)
+        return Repo(id, name, dir, false, InitObject.countCommits(dir), lastCommitted, InitObject.hasRemote(dir))
     }
 
     fun createGitDbDir(): Boolean {
@@ -81,16 +120,8 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
         }
     }
 
-    private fun createHooks() {
-        repoDao.getAll().forEach { createHook(it) }
-    }
-
     private fun createHook(repo: Repo) {
-        val hookPath = Paths.get(repo.path).resolve(".git").resolve("hooks").resolve("post-commit")
-        if (hookPath.parent.toFile().isDirectory && !hookPath.toFile().isFile) {
-            hookPath.toFile().createNewFile()
-            hookPath.toFile().writeText("gitdb update ${repo.id}")
-        }
+        writePostCommitHooks(Paths.get(repo.path, ".git").toAbsolutePath().toString(), repo.id)
     }
 
     private fun findGitReposOnMachine(): List<String> {
@@ -170,7 +201,7 @@ object InitObject {
         return count
     }
 
-    fun modifiedDateForLastCommit(dir: String): Date? = unixTimestampForLastCommit(dir)?.let { Date(it * 1000) }
+    fun lastCommitDate(dir: String): Date? = unixTimestampForLastCommit(dir)?.let { Date(it * 1000) }
 
     fun hasRemote(dir: String): Boolean {
         val command = "git remote -v"
