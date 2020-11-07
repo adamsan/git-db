@@ -36,38 +36,10 @@ class Init(var userHome: String, val appname: String, private val repoDao: RepoD
         val command = "git config --global init.templatedir $gitTemplatePath"
         ProcessBuilder(command.split(" ")).start()
 
-//        val target = Paths.get(gitTemplatePath).toFile()
         val hooks = Paths.get(gitTemplatePath, "hooks").toFile()
         if (!hooks.exists())
             hooks.mkdirs()
-
         writePostCommitHooks(gitTemplatePath)
-        return
-//        // copy files from resources
-//
-//        println("xxxxxxxxxxxxx")
-//        println(javaClass.protectionDomain.codeSource.location)
-//        println("xxxxxxxxxxxxx")
-//
-//
-//        // doesn't work, if running from a jar:
-//        // jar:file:/D:/Java/gitdb_testinstall/gitdb-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/git-templates
-//        val resourceName = "/git-templates"
-//        val resource = javaClass.getResource(resourceName)
-//        println(resource)
-//        val uri = resource.toURI()
-//        println("URI ------------------------> $uri")
-//
-//        val env = mutableMapOf<String, String>(Pair("create", "true") )
-//        FileSystems.newFileSystem(uri, env)
-//
-//        val source = Paths.get(uri);
-//        println(source)
-//        println("*".repeat(20))
-//
-//        val toFile = source.toFile()
-//        println(toFile)
-//        toFile.copyRecursively(target)
     }
 
     private fun writePostCommitHooks(gitDir: String, id: Int = 0) {
