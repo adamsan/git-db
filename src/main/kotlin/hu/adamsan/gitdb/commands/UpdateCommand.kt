@@ -65,12 +65,12 @@ class UpdateCommand(val userHome: String, val repoDao: RepoDao) {
 
         val maybeRepo = repoDao.findByPath(dir)
 
-        return if (maybeRepo?.isEmpty == true) {
+        return if (maybeRepo.isEmpty) {
             val newRepo = Repo(repoDao.getUnusedIndex(), name, dir, false, commits, lastCommitted, hasRemote)
             repoDao.insert(newRepo)
             newRepo.id
         } else {
-            val repo = maybeRepo!!.get()
+            val repo = maybeRepo.get()
             repo.commits = commits
             repo.lastCommitted = lastCommitted
             repo.hasRemote = hasRemote

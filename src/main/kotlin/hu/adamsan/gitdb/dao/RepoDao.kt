@@ -100,7 +100,7 @@ class RepoDao(val jdbi: Jdbi) {
         }
     }
 
-    fun findByPath(path: String): Optional<Repo>? {
+    fun findByPath(path: String): Optional<Repo> {
         val sql = "SELECT * FROM REPO WHERE path=:path"
         return jdbi.withHandle<Optional<Repo>, Exception> { h ->
             h.createQuery(sql)
