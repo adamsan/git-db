@@ -33,6 +33,9 @@ You can find and list all the repositories on your machine, or your most recent 
 
  - `gitdb update <repo_id>` - updates git repo in the current directory - used by git hooks
 
+### Screenshots
+ <img src="images/gitdb_list.png" />
+
 ### Similar projects
 
 - https://github.com/MirkoLedda/git-summary/blob/master/git-summary
