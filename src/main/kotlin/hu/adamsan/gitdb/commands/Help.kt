@@ -1,8 +1,8 @@
 package hu.adamsan.gitdb.commands
 
-class Help : Command {
+class Help {
     val name = "gitdb"
-    override fun run() {
+    fun help() {
         println("""
 			A command line tool to better organize, find, and inspect local git repositories.
 			

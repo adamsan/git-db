@@ -61,7 +61,9 @@ class GitdbApplication : ApplicationRunner {
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
             "cd" -> ChangeDirectory(userHome, repoDao).cd(args?.sourceArgs?.get(1)) // cd should be implemented in bat files?
             "update" -> UpdateCommand(userHome, repoDao).updateForId(args?.sourceArgs?.drop(1))
-            else -> help.run()
+            "favor"  -> Favor(repoDao).favor(args?.sourceArgs?.drop(1))
+            "unfavor" -> Favor(repoDao).unFavor(args?.sourceArgs?.drop(1))
+            else -> help.help()
         }
     }
 }
