@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 
-class Init(var userHome: String, val appname: String, private val repoDao: RepoDao) {
+class Init(var userHome: String, private val repoDao: RepoDao) {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val configDir = ".git-db"

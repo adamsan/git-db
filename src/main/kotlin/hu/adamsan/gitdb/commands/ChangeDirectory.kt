@@ -4,7 +4,7 @@ import hu.adamsan.gitdb.dao.RepoDao
 import java.nio.file.Paths
 
 
-class ChangeDirectory(private val userHome: String, private val repoDao: RepoDao, val gitDbHome: String) {
+class ChangeDirectory(private val userHome: String, private val repoDao: RepoDao, private val gitDbHome: String) {
 
     fun cd(projectId: String?) {
         val id = projectId!!.toInt()

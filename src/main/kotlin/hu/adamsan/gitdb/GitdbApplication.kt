@@ -25,9 +25,6 @@ class GitdbApplication : ApplicationRunner {
     @Value("\${user.home}")
     val userHome = ""
 
-    @Value(value = "\${app.name:'gitdb'}")
-    val name = ""
-
     @Value("\${GITDB_HOME}")
     val gitDbHome = ""
 
@@ -49,7 +46,7 @@ class GitdbApplication : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         val command = args?.sourceArgs?.getOrNull(0)?.toLowerCase()?.trimEnd()?.trimStart() ?: "help"
 
-        log.info("$name was invoked with command ${command}")
+        log.info("gitdb was invoked with command ${command}")
         log.info("User home: $userHome")
 
         //val jdbiBean = this.context.getBean(Jdbi::class.java)
@@ -60,7 +57,7 @@ class GitdbApplication : ApplicationRunner {
 
 
         when (command) {
-            "init" -> Init(userHome, name, repoDao).init(args?.sourceArgs?.drop(1))
+            "init" -> Init(userHome, repoDao).init(args?.sourceArgs?.drop(1))
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
             "cd" -> ChangeDirectory(userHome, repoDao, gitDbHome).cd(args?.sourceArgs?.get(1)) // cd should be implemented in bat files?
             "update" -> UpdateCommand(userHome, repoDao).updateForId(args?.sourceArgs?.drop(1))

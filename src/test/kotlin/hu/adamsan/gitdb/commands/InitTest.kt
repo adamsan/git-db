@@ -14,7 +14,7 @@ internal class InitTest {
 
     private val repoDao = Mockito.mock(RepoDao::class.java)
 
-    private val sut = Init("", "gitdb", repoDao)
+    private val sut = Init("", repoDao)
 
     @Test
     fun assert_createGitDbDir_creates_directory(@TempDir tmpHome: Path) {
