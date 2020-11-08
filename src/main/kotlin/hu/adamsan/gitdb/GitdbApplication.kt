@@ -28,6 +28,9 @@ class GitdbApplication : ApplicationRunner {
     @Value(value = "\${app.name:'gitdb'}")
     val name = ""
 
+    @Value("\${GITDB_HOME}")
+    val gitDbHome = ""
+
     val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
@@ -59,7 +62,7 @@ class GitdbApplication : ApplicationRunner {
         when (command) {
             "init" -> Init(userHome, name, repoDao).init(args?.sourceArgs?.drop(1))
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));
-            "cd" -> ChangeDirectory(userHome, repoDao).cd(args?.sourceArgs?.get(1)) // cd should be implemented in bat files?
+            "cd" -> ChangeDirectory(userHome, repoDao, gitDbHome).cd(args?.sourceArgs?.get(1)) // cd should be implemented in bat files?
             "update" -> UpdateCommand(userHome, repoDao).updateForId(args?.sourceArgs?.drop(1))
             "favor"  -> Favor(repoDao).favor(args?.sourceArgs?.drop(1))
             "unfavor" -> Favor(repoDao).unFavor(args?.sourceArgs?.drop(1))

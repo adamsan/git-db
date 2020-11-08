@@ -39,3 +39,10 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "11"
 	}
 }
+
+tasks.register<Copy>("buildAndCopyJar") {
+	dependsOn("build")
+	dependsOn("assemble")
+	from(file("$buildDir/libs/gitdb-0.0.1-SNAPSHOT.jar"))
+	into(file(System.getenv("GITDB_HOME")))
+}

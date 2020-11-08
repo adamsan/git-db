@@ -15,6 +15,7 @@ You can find and list all the repositories on your machine, or your most recent 
 ### Install and initialization
 
 - commands to classpath
+- set GITDB_HOME environment variable with install path
 - includes jre / kotlin native executable?
 - for first run: `gitdb init`
 
