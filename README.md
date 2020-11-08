@@ -35,8 +35,9 @@ You can find and list all the repositories on your machine, or your most recent 
 
 ### Screenshots
  <img src="images/gitdb_list.png" />
+ <img src="images/gitdb_mix.png" />
 
 ### Similar projects
 
-- https://github.com/MirkoLedda/git-summary/blob/master/git-summary
+- https://github.com/MirkoLedda/git-summary
 - https://github.com/lzakharov/gitls
