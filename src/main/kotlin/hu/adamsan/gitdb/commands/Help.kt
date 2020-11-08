@@ -13,7 +13,7 @@ class Help {
 			$name list - lists all git repositories
 			$name cd <project_id> - changes directory to repository's directory
 
-            $name update <project_id | 0>- updates git repo on current directory - used by git hooks
+			$name update <project_id | 0>- updates git repo on current directory - used by git hooks
 		""".trimIndent())
     }
 
