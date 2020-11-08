@@ -8,9 +8,9 @@ import kotlin.math.max
 
 
 class Table {
-    var header: List<String> = Collections.emptyList()
+    private var header: List<String> = Collections.emptyList()
 
-    var data: MutableList<List<String>> = ArrayList()
+    private var data: MutableList<List<String>> = ArrayList()
 
     fun addHeader(header: List<String>) {
         this.header = header
@@ -51,12 +51,12 @@ class Table {
         return before + string + after
     }
 
-    fun printLeft(string: String, len: Int, paddingChar: Char = ' '): String {
+    private fun printLeft(string: String, len: Int, paddingChar: Char = ' '): String {
         val after = "$paddingChar".repeat(len - string.length)
         return string + after
     }
 
-    fun printRight(string: String, len: Int, paddingChar: Char = ' '): String {
+    private fun printRight(string: String, len: Int, paddingChar: Char = ' '): String {
         val before = "$paddingChar".repeat(len - string.length)
         return before + string
     }
