@@ -13,18 +13,18 @@ in `~/.gitdb/repos.db`, and hooking into git commands, and updating the state of
 You can find and list all the repositories on your machine, or your most recent ones, and `cd` into it.
 
 ### Commands:
+ 
+| Command | Description | 
+| --- | --- | 
+| `gitdb init` | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir git config --global init.templatedir %userprofile%/.git-db/.git-templates. Adds a post-commit git hook to all repos with an update <id> call. |
+| `gitdb init quick` | same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing. | 
+| `gitdb list` | lists .git repositories on your machine from it's database |
+| `gitdb cd <repo_id>` | change directory to repository identified by id (number / sha / project name) |
+| `gitdb favor <repo_id>` | mark repository as favorite |
+| `gitdb unfavor <repo_id>` | unmark repository as favorite |
+| `gitdb help` | prints help
+| `gitdb update <repo_id>` | updates git repo in the current directory - used by git hooks
 
-- `gitdb init` - creates database, starts scan on all drives for directories containing `.git` folder.
- Creates and configures global templatedir `git config --global init.templatedir %userprofile%/.git-db/.git-templates`.
- Adds a post-commit git hook to all repos with an `update <id>` call.
-- `gitdb init quick` - same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing.  
-- `gitdb list` - lists .git repositories on your machine from it's database
-- `gitdb cd <repo_id>` - change directory to repository identified by id (number / sha / project name)
-- `gitdb favor <repo_id>` - mark repository as favorite
-- `gitdb unfavor <repo_id>` - unmark repository as favorite
-- `gitdb help` - prints help
-
- - `gitdb update <repo_id>` - updates git repo in the current directory - used by git hooks
 
 ### Install and initialization
 
