@@ -14,16 +14,16 @@ You can find and list all the repositories on your machine, or your most recent 
 
 ### Commands:
 
-| Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Description |
+| Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Description |
 | --- | --- | 
-| `gitdb init` | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir git config --global init.templatedir %userprofile%/.git-db/.git-templates. Adds a post-commit git hook to all repos with an update <id> call. |
+| `gitdb init` | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir `git config --global init.templatedir ~/.git-db/.git-templates`. Adds a post-commit git hook to all repos with an update <id> call. All new or cloned projects will be tracked. |
 | `gitdb init quick` | same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing. | 
 | `gitdb list` | lists .git repositories on your machine from it's database |
 | `gitdb cd <id>` | change directory to repository identified by id (number / sha / project name) |
-| `gitdb favor <id>` | mark repository as favorite |
-| `gitdb unfavor <id>` | unmark repository as favorite |
+| `gitdb favor [id]` | mark repository (by id or by current dir) as favorite |
+| `gitdb unfavor [id]` | unmark repository as favorite |
 | `gitdb help` | prints help
-| `gitdb update <id>` | updates git repo in the current directory - used by git hooks
+| `gitdb update <id\|0>` | updates git repo in the current directory - used internally by git hooks
 
 
 ### Install and initialization
@@ -34,7 +34,7 @@ You can find and list all the repositories on your machine, or your most recent 
     - set GITDB_HOME environment variable with value of the above folder, and add GITDB_HOME to PATH environment variable
     - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
 - #### From Source
-    Required java version: Java 11
+    Required java version: Java 11 or above
     - clone source code
     - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
     - open up a console and run `gradlew buildAndCopyJar` - this will build the project and copy the jar, and startup scripts to GITDB_HOME
