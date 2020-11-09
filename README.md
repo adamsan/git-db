@@ -7,10 +7,14 @@
 If you have a lot of repositories on your local machine _(work, tutorial, experiments, hobby projects, etc..)_, in different folders, drives,
 it can be hard to keep track, where everything is.
 
-GITDB tries to solve this problem by scanning the computer for existing git repositories, and keeping a record about them in a sqlite database
-in `~/.gitdb/repos.db`, and hooking into git commands, and updating the state of repositories.
+GITDB solves this problem by keeping and maintaining a database about the local repositories.
+Stores basic information in a sqlite database in `~/.gitdb/.repos.db`, and hooks into git commands (post-commit), and updates the state of repositories, when a commit happens.
 
 You can find and list all the repositories on your machine, or your most recent ones, and `cd` into it.
+
+> **⚠  WARNING: To users with custom git workflows/tools.**  
+> If you are using customised git hooks (post-commit) in your workflow, or use tools, that rely on them,
+> or on `global templatedir` this tool might be interfering with it!
 
 ### Commands:
 
