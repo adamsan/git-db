@@ -44,5 +44,7 @@ tasks.register<Copy>("buildAndCopyJar") {
 	dependsOn("build")
 	dependsOn("assemble")
 	from(file("$buildDir/libs/gitdb-0.0.1-SNAPSHOT.jar"))
+	from(file("$buildDir/resources/main/scripts/gitdb"))
+	from(file("$buildDir/resources/main/scripts/gitdb.bat"))
 	into(file(System.getenv("GITDB_HOME")))
 }

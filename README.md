@@ -12,13 +12,6 @@ in `~/.gitdb/repos.db`, and hooking into git commands, and updating the state of
 
 You can find and list all the repositories on your machine, or your most recent ones, and `cd` into it.
 
-### Install and initialization
-
-- commands to classpath
-- set GITDB_HOME environment variable with install path
-- includes jre / kotlin native executable?
-- for first run: `gitdb init`
-
 ### Commands:
 
 - `gitdb init` - creates database, starts scan on all drives for directories containing `.git` folder.
@@ -32,6 +25,21 @@ You can find and list all the repositories on your machine, or your most recent 
 - `gitdb help` - prints help
 
  - `gitdb update <repo_id>` - updates git repo in the current directory - used by git hooks
+
+### Install and initialization
+
+- #### From Release
+    Java install not needed (TODO: include jre to release bundle)
+    - extract zip to a folder, for example `D:\Java\gitdb`
+    - set GITDB_HOME environment variable with value of the above folder, and add GITDB_HOME to PATH environment variable
+    - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
+- #### From Source
+    Required java version: Java 11
+    - clone source code
+    - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
+    - open up a console and run `gradlew buildAndCopyJar` - this will build the project and copy the jar, and startup scripts to GITDB_HOME
+    - run `gitdb init` command, and confirm. It can take a long time, (~30 min) 
+
 
 ### Screenshots
  <img src="images/gitdb_list.png" width="100%" />
