@@ -1,4 +1,4 @@
-# GITDB
+# <img src="images/gitdb_logo.png" width="80" height="80" /> GITDB 
 
 > A command line tool to better organize, find, and inspect local git repositories.
 
