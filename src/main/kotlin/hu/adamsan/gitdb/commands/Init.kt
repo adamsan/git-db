@@ -39,6 +39,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         // git config --global init.templatedir %userprofile%/.git-templates
         val gitTemplatePath = "$userHome/.git-db/.git-templates"
         val command = "git config --global init.templatedir $gitTemplatePath"
+        println("Running command: \n$\tcommand" )
         ProcessBuilder(command.split(" ")).start()
 
         val hooks = Paths.get(gitTemplatePath, "hooks").toFile()
@@ -54,7 +55,8 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 
     private fun writeOrAppendCommand(gitDir: String, hookFile: String, command: String) {
         val postCommit = Paths.get(gitDir, "hooks", hookFile).toFile()
-        if (postCommit.readText().contains("gitdb update"))
+        println("Writing hook file: $postCommit")
+        if (postCommit.exists() && postCommit.readText().contains("gitdb update"))
             postCommit.appendText(command)
         else
             postCommit.writeText(command)
@@ -83,7 +85,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
     }
 
     fun createGitDbDir(): Boolean {
-        log.info("create .git-db dir in user home directory: $userHome")
+        println("create .git-db dir in user home directory: $userHome")
         val userHomePath = Paths.get(userHome)
         val resolve = userHomePath.resolve(configDir)
         val f = File(resolve.toString())
@@ -92,7 +94,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 
     fun createDb() {
         val dbPath = InitObject.dbPath(userHome)
-        log.info("create DB in $dbPath")
+        println("create DB in $dbPath")
         dbPath.toFile().delete()
         dbPath.toFile().createNewFile()
         DriverManager.getConnection("jdbc:sqlite:$dbPath").use { con ->
@@ -125,27 +127,33 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
     }
 
     private fun findGitReposIn(path: Path): List<Path> {
-        log.info("Start processing: $path")
         val depth = 8
+        println("Start processing: $path\nSearch max-depth: $depth")
+        var visited = 0
 
         val options: Set<FileVisitOption> = setOf(FileVisitOption.FOLLOW_LINKS)
         val gitDirs: MutableList<Path> = ArrayList()
 
         val visitor = object : SimpleFileVisitor<Path>() {
-            override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
-                    when {
-                        File(dir!!.resolve(".git").toString()).isDirectory -> {
-                            log.info("Found .git in $dir")
-                            gitDirs.add(dir)
-                            FileVisitResult.SKIP_SUBTREE
-                        }
-                        isDotHiddenDir(dir) || isRecycleBin(dir) -> {
-                            FileVisitResult.SKIP_SUBTREE
-                        }
-                        else -> {
-                            FileVisitResult.CONTINUE
-                        }
+            override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
+                visited += 1
+                return when {
+                    File(dir!!.resolve(".git").toString()).isDirectory -> {
+                        log.info("Found .git in $dir")
+                        gitDirs.add(dir)
+                        FileVisitResult.SKIP_SUBTREE
                     }
+                    isProcDir(dir) || isDotHiddenDir(dir) || isRecycleBin(dir) -> {
+                        FileVisitResult.SKIP_SUBTREE
+                    }
+                    else -> {
+                        print("Found .git repositories: ${gitDirs.size} | Visited directories: $visited\r")
+                        FileVisitResult.CONTINUE
+                    }
+                }
+            }
+
+            private fun isProcDir(dir :Path): Boolean = dir.toString().startsWith("/proc")
 
             private fun isRecycleBin(dir: Path): Boolean {
                 return dir.toFile().isDirectory && "\$RECYCLE.BIN" == dir.fileName?.toString()

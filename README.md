@@ -36,6 +36,7 @@ You can find and list all the repositories on your machine, or your most recent 
     Java install not needed (TODO: include jre to release bundle)
     - extract zip to a folder, for example `D:\Java\gitdb`
     - set GITDB_HOME environment variable with value of the above folder, and add GITDB_HOME to PATH environment variable
+  (Linux: `export GITDB_HOME=~/bin/gitdb`)
     - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
 - #### From Source
     Required java version: Java 11 or above
