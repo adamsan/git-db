@@ -7,7 +7,7 @@ import java.nio.file.Paths
 class ChangeDirectory(private val userHome: String, private val repoDao: RepoDao, private val gitDbHome: String) {
 
     fun cd(projectId: String?) {
-        val id = projectId!!.toInt()
+        val id = projectId!!.trim().toInt()
         val dir = repoDao.findById(id).get().path
 
         val commandWin = "cd /d $dir"

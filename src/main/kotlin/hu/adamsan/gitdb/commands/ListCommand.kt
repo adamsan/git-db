@@ -6,7 +6,7 @@ import hu.adamsan.gitdb.render.Align.*
 import hu.adamsan.gitdb.render.Table
 
 
-class ListCommand(val userHome: String, val repoDao: RepoDao) {
+class ListCommand(private val userHome: String, private val repoDao: RepoDao) {
 
 
     fun list(parameters: List<String>?) {
@@ -14,6 +14,7 @@ class ListCommand(val userHome: String, val repoDao: RepoDao) {
             listAll()
         else {
             println("list in $userHome by args $parameters")
+            TODO("Implement list with parameters")
         }
     }
 

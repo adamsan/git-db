@@ -55,7 +55,6 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 
     private fun writeOrAppendCommand(gitDir: String, hookFile: String, command: String) {
         val postCommit = Paths.get(gitDir, "hooks", hookFile).toFile()
-        println("Writing hook file: $postCommit")
         if (postCommit.exists() && postCommit.readText().contains("gitdb update"))
             postCommit.appendText(command)
         else
