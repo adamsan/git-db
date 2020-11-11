@@ -45,8 +45,7 @@ class GitdbApplication : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         val command = args?.sourceArgs?.getOrNull(0)?.toLowerCase()?.trimEnd()?.trimStart() ?: "help"
-
-        log.info("gitdb was invoked with command ${command}")
+        println("running gitdb command: ${command}")
         log.info("User home: $userHome")
 
         //val jdbiBean = this.context.getBean(Jdbi::class.java)

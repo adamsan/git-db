@@ -10,10 +10,7 @@ class ChangeDirectory(private val userHome: String, private val repoDao: RepoDao
         val id = projectId!!.trim().toInt()
         val dir = repoDao.findById(id).get().path
 
-        val commandWin = "cd /d $dir"
-        val commandLinux = "cd /d $dir"
-
-        Paths.get(gitDbHome, "run_cd.bat").toFile().writeText(commandWin)
-        Paths.get(gitDbHome, "run_cd").toFile().writeText(commandLinux)
+        Paths.get(gitDbHome, "run_cd.bat").toFile().writeText("cd /d \"$dir\"")
+        Paths.get(gitDbHome, "run_cd").toFile().writeText("cd \"$dir\"")
     }
 }

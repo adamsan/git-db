@@ -49,16 +49,13 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
     }
 
     private fun writePostCommitHooks(gitDir: String, id: Int = 0) {
-        writeOrAppendCommand(gitDir, "post-commit", "#!/bin/sh\ngitdb update $id\n")
-        writeOrAppendCommand(gitDir, "post-commit.bat", "gitdb update $id\n")
+        writeCommand(gitDir, "post-commit", "#!/bin/sh\ngitdb update $id\n")
+        writeCommand(gitDir, "post-commit.bat", "gitdb update $id\n")
     }
 
-    private fun writeOrAppendCommand(gitDir: String, hookFile: String, command: String) {
+    private fun writeCommand(gitDir: String, hookFile: String, command: String) {
         val postCommit = Paths.get(gitDir, "hooks", hookFile).toFile()
-        if (postCommit.exists() && postCommit.readText().contains("gitdb update"))
-            postCommit.appendText(command)
-        else
-            postCommit.writeText(command)
+        postCommit.writeText(command)
     }
 
     private fun confirmRun(): Boolean {

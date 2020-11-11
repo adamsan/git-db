@@ -1,2 +1,12 @@
 #!/bin/sh
 java -Dlogging.level.root=WARN -jar "$GITDB_HOME"/gitdb-0.0.1-SNAPSHOT.jar "$@"
+
+if [ $? -eq 0 ]; then
+    if [ "$1" = "cd" ]; then
+      cat $GITDB_HOME/run_cd
+      . $GITDB_HOME/run_cd
+      echo ""
+    fi
+else
+    echo FAIL
+fi
