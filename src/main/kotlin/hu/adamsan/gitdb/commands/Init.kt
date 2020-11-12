@@ -110,16 +110,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 
     private fun findGitReposOnMachine(): List<String> {
         val drives = FileSystems.getDefault().rootDirectories
-        // TODO: uncomment after dev - commenting below line because it takes too long to search the computer
-         return drives.flatMap { findGitReposIn(it) }.map { it.toString() }
-
-//        val someGitrepos = listOf(
-//                "D:\\workspaces\\web_practice\\todo",
-//                "D:\\workspaces\\web_practice\\webapp-runner",
-//                "E:\\flask_learn\\flask_project",
-//                "E:\\tmp\\docker_doodle\\doodle"
-//        )
-//        return someGitrepos
+        return drives.flatMap { findGitReposIn(it) }.map { it.toString() }
     }
 
     private fun findGitReposIn(path: Path): List<Path> {
@@ -155,9 +146,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
                 return dir.toFile().isDirectory && "\$RECYCLE.BIN" == dir.fileName?.toString()
             }
 
-            /**
-             * .vim/ .cookiecutters/ .jenkins/
-             */
+             // .vim/ .cookiecutters/ .jenkins/
             private fun isDotHiddenDir(dir: Path): Boolean {
                 return dir.toFile().isDirectory && dir.fileName?.toString()?.startsWith(".") ?: false
             }
@@ -171,8 +160,6 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 }
 
 object InitObject {
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-
     fun dbPath(userHome: String): Path = Paths.get(userHome, ".git-db", ".repos.db")
 
     fun countCommits(dir: String): Int {
@@ -194,7 +181,7 @@ object InitObject {
         val command = "git remote -v"
         val p = ProcessBuilder(command.split(" ")).directory(File(dir)).start()
         p.inputStream.bufferedReader().useLines { lines ->
-            return lines.any { it -> it.contains("origin") }
+            return lines.any { it.contains("origin") }
         }
     }
 

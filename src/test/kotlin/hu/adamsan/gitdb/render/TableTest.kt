@@ -54,8 +54,8 @@ internal class TableTest {
 
     @Test
     fun printMiddle() {
-        assertEquals("__a__", Table().printMiddle("a", 5, '_'))
-        assertEquals("_abc_", Table().printMiddle("abc", 5, '_'))
-        assertEquals("__a_", Table().printMiddle("a", 4, '_'))
+        assertEquals("__a__", Table().padMiddle("a", 5, '_'))
+        assertEquals("_abc_", Table().padMiddle("abc", 5, '_'))
+        assertEquals("__a_", Table().padMiddle("a", 4, '_'))
     }
 }

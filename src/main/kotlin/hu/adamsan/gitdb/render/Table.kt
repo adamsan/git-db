@@ -1,11 +1,13 @@
 package hu.adamsan.gitdb.render
 
+import hu.adamsan.gitdb.render.Align.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 
+enum class Align { LEFT, CENTER, RIGHT }
 
 class Table {
     private var header: List<String> = Collections.emptyList()
@@ -25,11 +27,11 @@ class Table {
     fun render(): String {
         val maxLengths = calculateMaxLengthsPerColumn()
         val headerLine = maxLengths.zip(header)
-                .map { p -> printMiddle(p.second, p.first) }
+                .map { p -> padMiddle(p.second, p.first) }
                 .joinToString("|")
         val bodyLines = data.map { row ->
             maxLengths.zip(row)
-                    .map { p -> printMiddle(p.second, p.first) }
+                    .map { p -> padMiddle(p.second, p.first) }
                     .joinToString("|")
         }
         return headerLine +
@@ -44,35 +46,29 @@ class Table {
         return lengths.fold(headerMaxLengths, { acc, rowLengths -> acc.zip(rowLengths).map { a -> max(a.first, a.second) } })
     }
 
-    fun printMiddle(string: String, len: Int, paddingChar: Char = ' '): String {
-        val d = (len - string.length) / 2.0
-        val before = "$paddingChar".repeat(ceil(d).toInt())
-        val after = "$paddingChar".repeat(floor(d).toInt())
-        return before + string + after
+    fun padMiddle(s: String, len: Int, pad: Char = ' '): String {
+        val d = (len - s.length) / 2.0
+        val before = "$pad".repeat(ceil(d).toInt())
+        val after = "$pad".repeat(floor(d).toInt())
+        return before + s + after
     }
 
-    private fun printLeft(string: String, len: Int, paddingChar: Char = ' '): String {
-        val after = "$paddingChar".repeat(len - string.length)
-        return string + after
-    }
+    private fun padLeft(s: String, len: Int, pad: Char = ' '): String = s + "$pad".repeat(len - s.length)
 
-    private fun printRight(string: String, len: Int, paddingChar: Char = ' '): String {
-        val before = "$paddingChar".repeat(len - string.length)
-        return before + string
-    }
+    private fun padRight(s: String, len: Int, pad: Char = ' '): String = "$pad".repeat(len - s.length) + s
 
     fun render(alignments: List<Align>): String {
         val maxLengths = calculateMaxLengthsPerColumn()
         val headerLine = maxLengths.zip(header)
-                .map { p -> printMiddle(p.second, p.first) }
+                .map { p -> padMiddle(p.second, p.first) }
                 .joinToString("|")
         val bodyLines = data.map { row ->
             maxLengths.zip(row).zip(alignments)
                     .map { p ->
                         when (p.second) {
-                            Align.CENTER -> printMiddle(p.first.second, p.first.first)
-                            Align.RIGHT -> printRight(p.first.second, p.first.first)
-                            Align.LEFT -> printLeft(p.first.second, p.first.first)
+                            CENTER -> padMiddle(s = p.first.second, len = p.first.first)
+                            LEFT -> padLeft(s = p.first.second, len = p.first.first)
+                            RIGHT -> padRight(s = p.first.second, len = p.first.first)
                         }
                     }
                     .joinToString("|")
@@ -82,8 +78,4 @@ class Table {
                 "-".repeat(maxLengths.sum() + maxLengths.size) +
                 "\n" + bodyLines.joinToString("\n")
     }
-}
-
-enum class Align {
-    LEFT, CENTER, RIGHT
 }

@@ -48,8 +48,6 @@ class GitdbApplication : ApplicationRunner {
         println("running gitdb command: ${command}")
         log.info("User home: $userHome")
 
-        //val jdbiBean = this.context.getBean(Jdbi::class.java)
-        //log.info("JDBI BEAN: $jdbiBean")
         var repoDao = context.getBean(RepoDao::class.java)
 
         var help = context.getBean(Help::class.java)
