@@ -30,7 +30,7 @@ internal class InitTest {
         sut.userHome = tmpHome.toString()
         val db = tmpHome.resolve(".git-db").resolve(".repos.db").toString()
         assertTrue(sut.createGitDbDir())
-        sut.createDb()
+        sut.deleteAndCreateDb()
         assertThat(File(db)).exists().isFile()
     }
 

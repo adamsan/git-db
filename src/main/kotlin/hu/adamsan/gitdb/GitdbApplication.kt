@@ -52,7 +52,6 @@ class GitdbApplication : ApplicationRunner {
 
         var help = context.getBean(Help::class.java)
 
-
         when (command) {
             "init" -> Init(userHome, repoDao).init(args?.sourceArgs?.drop(1))
             "list" -> ListCommand(userHome, repoDao).list(args?.sourceArgs?.drop(1));

@@ -24,10 +24,11 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
             return
         }
         createGitDbDir()
-        createDb()
         createGitConfigInitTemplateDir()
-        val repoDirs = if(parameters.isNullOrEmpty() || "quick" != parameters[0])
+        val repoDirs = if(parameters.isNullOrEmpty() || "quick" != parameters[0]) {
+            deleteAndCreateDb()
             findGitReposOnMachine()
+        }
         else
             findGitReposOnMachineByExistingDbRoots()
 
@@ -39,7 +40,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         // git config --global init.templatedir %userprofile%/.git-templates
         val gitTemplatePath = "$userHome/.git-db/.git-templates"
         val command = "git config --global init.templatedir $gitTemplatePath"
-        println("Running command: \n$\tcommand" )
+        println("Running command: \n\t$command" )
         ProcessBuilder(command.split(" ")).start()
 
         val hooks = Paths.get(gitTemplatePath, "hooks").toFile()
@@ -56,6 +57,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
     private fun writeCommand(gitDir: String, hookFile: String, command: String) {
         val postCommit = Paths.get(gitDir, "hooks", hookFile).toFile()
         postCommit.writeText(command)
+        postCommit.setExecutable(true)
     }
 
     private fun confirmRun(): Boolean {
@@ -88,7 +90,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         return f.mkdir()
     }
 
-    fun createDb() {
+    fun deleteAndCreateDb() {
         val dbPath = InitObject.dbPath(userHome)
         println("create DB in $dbPath")
         dbPath.toFile().delete()
@@ -134,7 +136,8 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
                         FileVisitResult.SKIP_SUBTREE
                     }
                     else -> {
-                        print("Found .git repositories: ${gitDirs.size} | Visited directories: $visited\r")
+                        val latestFoundMessage = if(gitDirs.isEmpty()) "" else " | Latest repo found: ${gitDirs.get(gitDirs.size - 1).toString()}"
+                        print("Found .git repositories: ${gitDirs.size} | Visited directories: $visited $latestFoundMessage\r")
                         FileVisitResult.CONTINUE
                     }
                 }
@@ -155,6 +158,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
 
         }
         Files.walkFileTree(path, options, depth, visitor)
+        println()
         return gitDirs
     }
 }
