@@ -25,13 +25,15 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         }
         createGitDbDir()
         createGitConfigInitTemplateDir()
-        val repoDirs = if(parameters.isNullOrEmpty() || "quick" != parameters[0]) {
+        val repoDirs = if (parameters.isNullOrEmpty() || parameters[0].trim() == "") {
             deleteAndCreateDb()
             findGitReposOnMachine()
-        }
-        else
+        } else if (parameters[0].trim() == "quick") {
             findGitReposOnMachineByExistingDbRoots()
-
+        } else {
+            throw RuntimeException("Unknown parameter: ${parameters[0]}")
+        }
+        
         val repos = clearTableAndSaveRepos(repoDirs)
         repos.forEach { createHook(it) }
     }
@@ -40,7 +42,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         // git config --global init.templatedir %userprofile%/.git-templates
         val gitTemplatePath = "$userHome/.git-db/.git-templates"
         val command = "git config --global init.templatedir $gitTemplatePath"
-        println("Running command: \n\t$command" )
+        println("Running command: \n\t$command")
         ProcessBuilder(command.split(" ")).start()
 
         val hooks = Paths.get(gitTemplatePath, "hooks").toFile()
@@ -136,20 +138,20 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
                         FileVisitResult.SKIP_SUBTREE
                     }
                     else -> {
-                        val latestFoundMessage = if(gitDirs.isEmpty()) "" else " | Latest repo found: ${gitDirs.get(gitDirs.size - 1).toString()}"
+                        val latestFoundMessage = if (gitDirs.isEmpty()) "" else " | Latest repo found: ${gitDirs.get(gitDirs.size - 1).toString()}"
                         print("Found .git repositories: ${gitDirs.size} | Visited directories: $visited $latestFoundMessage\r")
                         FileVisitResult.CONTINUE
                     }
                 }
             }
 
-            private fun isProcDir(dir :Path): Boolean = dir.toString().startsWith("/proc")
+            private fun isProcDir(dir: Path): Boolean = dir.toString().startsWith("/proc")
 
             private fun isRecycleBin(dir: Path): Boolean {
                 return dir.toFile().isDirectory && "\$RECYCLE.BIN" == dir.fileName?.toString()
             }
 
-             // .vim/ .cookiecutters/ .jenkins/
+            // .vim/ .cookiecutters/ .jenkins/
             private fun isDotHiddenDir(dir: Path): Boolean {
                 return dir.toFile().isDirectory && dir.fileName?.toString()?.startsWith(".") ?: false
             }
