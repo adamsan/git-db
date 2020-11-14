@@ -118,7 +118,8 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
     }
 
     private fun findGitReposIn(path: Path): List<Path> {
-        val depth = 8
+        val maxDepth = 8
+        val depth = maxDepth - path.nameCount
         println("Start processing: $path\nSearch max-depth: $depth")
         var visited = 0
 
