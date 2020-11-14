@@ -1,5 +1,11 @@
 #!/bin/sh
-java -Dlogging.level.root=WARN -jar "$GITDB_HOME"/gitdb-0.0.1-SNAPSHOT.jar "$@"
+
+if [ -d "$GITDB_HOME/custom_jre" ]; then
+    echo "Running from CUSTOM JRE"
+    "$GITDB_HOME/custom_jre/bin/java" -Dlogging.level.root=WARN -jar "$GITDB_HOME"/gitdb-0.0.1-SNAPSHOT.jar "$@"
+else
+    java -Dlogging.level.root=WARN -jar "$GITDB_HOME"/gitdb-0.0.1-SNAPSHOT.jar "$@"
+fi
 
 if [ $? -eq 0 ]; then
     if [ "$1" = "cd" ]; then
