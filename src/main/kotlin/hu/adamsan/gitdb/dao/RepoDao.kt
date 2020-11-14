@@ -4,7 +4,6 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.mapper.RowMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Repository
 import java.util.*
 
 data class Repo(
@@ -17,7 +16,6 @@ data class Repo(
         var hasRemote: Boolean = false
 )
 
-@Repository
 class RepoDao(val jdbi: Jdbi) {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     private val mapper: RowMapper<Repo> = RowMapper { rs, _ ->

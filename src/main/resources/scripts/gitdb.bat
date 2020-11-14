@@ -1,9 +1,9 @@
 @echo off
 
 if EXIST %GITDB_HOME%\custom_jre (
-	%GITDB_HOME%\custom_jre\bin\java -Dlogging.level.root=WARN -jar %GITDB_HOME%/gitdb-0.0.1-SNAPSHOT.jar %1 %2
+	%GITDB_HOME%\custom_jre\bin\java -Dlogging.level.root=WARN -jar %GITDB_HOME%/gitdb-0.0.2-SNAPSHOT.jar %1 %2
 ) else (
-	java -Dlogging.level.root=WARN -jar %GITDB_HOME%/gitdb-0.0.1-SNAPSHOT.jar %1 %2
+	java -Dlogging.level.root=WARN -jar %GITDB_HOME%/gitdb-0.0.2-SNAPSHOT.jar %1 %2
 )
 
 if %ERRORLEVEL% == 0 (
