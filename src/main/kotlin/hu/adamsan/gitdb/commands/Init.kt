@@ -2,20 +2,20 @@ package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import hu.adamsan.gitdb.logging.LoggingUtil
 import java.io.File
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
 import java.util.*
+import java.util.logging.Logger
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 
 class Init(var userHome: String, private val repoDao: RepoDao) {
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val log: Logger = LoggingUtil.getLogger(this.javaClass.name)
 
     private val configDir = ".git-db"
 
@@ -33,7 +33,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         } else {
             throw RuntimeException("Unknown parameter: ${parameters[0]}")
         }
-        
+
         val repos = clearTableAndSaveRepos(repoDirs)
         repos.forEach { createHook(it) }
     }

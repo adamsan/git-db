@@ -1,12 +1,12 @@
 package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.RepoDao
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import hu.adamsan.gitdb.logging.LoggingUtil
+import java.util.logging.Logger
 
 
 class Favor(private val repoDao: RepoDao) {
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val log: Logger = LoggingUtil.getLogger(this.javaClass.name)
 
     fun favor(parameters: List<String>?) = setFavorite(parameters, true)
     fun unFavor(parameters: List<String>?) = setFavorite(parameters, false)

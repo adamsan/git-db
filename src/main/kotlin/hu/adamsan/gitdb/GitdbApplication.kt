@@ -2,17 +2,17 @@ package hu.adamsan.gitdb
 
 import hu.adamsan.gitdb.commands.*
 import hu.adamsan.gitdb.dao.RepoDao
+import hu.adamsan.gitdb.logging.LoggingUtil
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlite3.SQLitePlugin
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import java.util.logging.Logger
 
 class GitdbApplication {
 
     private val userHome: String = System.getProperty("user.home")
     private val gitDbHome: String = System.getProperty("GITDB_HOME") ?: System.getenv("GITDB_HOME")
 
-    val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val log: Logger = LoggingUtil.getLogger(this.javaClass.name)
 
     private fun jdbi(): Jdbi {
         val db = InitObject.dbPath(userHome.orEmpty()).toString()
