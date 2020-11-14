@@ -34,7 +34,7 @@ You can find and list all the repositories on your machine, or your most recent 
 
 - #### From Release
     Java install not needed  
-    (TODO: include jre to release bundle) Command used to create JRE: `jlink  --output custom_jre --add-modules java.sql,java.desktop,java.naming,jdk.unsupported`
+    (TODO: include jre to release bundle) Command used to create JRE: `jlink  --output custom_jre --add-modules java.sql,java.desktop,java.naming,jdk.unsupported --strip-debug --compress 2`
     - extract zip to a folder, for example `D:\Java\gitdb`
     - set GITDB_HOME environment variable with value of the above folder, and add GITDB_HOME to PATH environment variable
   (Linux: `export GITDB_HOME=~/bin/gitdb`)
