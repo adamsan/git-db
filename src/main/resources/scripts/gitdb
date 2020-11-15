@@ -6,9 +6,10 @@ fi
 
 if [ -f "$GITDB_HOME/custom_jre/bin/java" ]; then
     echo "Running from CUSTOM JRE"
-    "$GITDB_HOME/custom_jre/bin/java" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar "$GITDB_HOME"/gitdb-0.0.2-SNAPSHOT.jar "$@"
+    # to change log level: -Dorg.slf4j.simpleLogger.defaultLogLevel=info
+    "$GITDB_HOME/custom_jre/bin/java" -jar "$GITDB_HOME"/gitdb-0.0.2-SNAPSHOT.jar "$@"
 else
-    java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar "$GITDB_HOME"/gitdb-0.0.2-SNAPSHOT.jar "$@"
+    java -jar "$GITDB_HOME"/gitdb-0.0.2-SNAPSHOT.jar "$@"
 fi
 
 if [ $? -eq 0 ]; then
