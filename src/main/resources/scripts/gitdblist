@@ -1,0 +1,2 @@
+#!/bin/sh
+sqlite3  -column -header  ~/.git-db/.repos.db "select id, name, path, case favorite when 1 then '*' else '-' end as favorite, date(last_committed/1000, 'unixepoch', 'localtime') as last_commit_date,  (strftime('%%s','now') - last_committed/1000)/60/60/24 as days_ago,  case has_remote when 1 then '*' else '-' end as has_remote  from repo "

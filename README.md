@@ -23,6 +23,7 @@ You can find and list all the repositories on your machine, or your most recent 
 | `gitdb init` | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir `git config --global init.templatedir ~/.git-db/.git-templates`. Adds a post-commit git hook to all repos with an update <id> call. All new or cloned projects will be tracked. |
 | `gitdb init quick` | same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing. | 
 | `gitdb list` | lists .git repositories on your machine from it's database |
+| `gitdb ls` | same as above, but implemented with a shell script sqlite3 command (it's faster) |
 | `gitdb cd <id>` | change directory to repository identified by id (number / sha / project name). ⚠ In Linux this command needs to be called with `source` in order to effect current working directory. For example: `. gitdb cd 4` |
 | `gitdb favor [id]` | mark repository (by id or by current dir) as favorite |
 | `gitdb unfavor [id]` | unmark repository as favorite |
@@ -32,20 +33,22 @@ You can find and list all the repositories on your machine, or your most recent 
 
 ### Install and initialization
 
-- #### From Release
-    Java install not needed  
-    Command used to create JRE: `jlink  --output custom_jre --add-modules java.sql,java.desktop,java.naming,jdk.unsupported --strip-debug --compress 2`
-    - extract zip to a folder, for example `D:\Java\gitdb`
-    - set GITDB_HOME environment variable with value of the above folder, and add GITDB_HOME to PATH environment variable
-  (Linux: `export GITDB_HOME=~/bin/gitdb`)
-    - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
-- #### From Source
-    Required java version: Java 11 or above
-    - clone source code
-    - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
-    - open up a console and run `gradlew buildAndCopyJar` - this will build the project and copy the jar, and startup scripts to GITDB_HOME
-    - run `gitdb init` command, and confirm. It can take a long time, (~30 min) 
+#### From Release
+Java install not needed, command used to create JRE: `jlink  --output custom_jre --add-modules java.sql,java.desktop,java.naming,jdk.unsupported --strip-debug --compress 2`
+- install `sqlite3` command and add it to path
+- extract zip to a folder, for example `D:\Java\gitdb`
+- set GITDB_HOME environment variable with value of the above folder (do not end with path separator), and add GITDB_HOME to PATH environment variable
+(Linux: `export GITDB_HOME=~/bin/gitdb`)
+- run `gitdb init` command, and confirm. It can take a long time, (~30 min)
 
+
+#### From Source
+    Required java version: Java 11 or above
+ - install `sqlite3` command and add it to path
+ - clone source code
+ - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
+ - open up a console and run `gradlew buildAndCopyJar` - this will build the project and copy the jar, and startup scripts to GITDB_HOME
+ - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
 
 ### Screenshots
  <img src="images/gitdb_list.png" width="100%" />

@@ -1,6 +1,10 @@
 #!/bin/sh
+if [ "$1" = "ls" ]; then
+	gitdblist
+	return 0
+fi
 
-if [ -d "$GITDB_HOME/custom_jre" ]; then
+if [ -f "$GITDB_HOME/custom_jre/bin/java" ]; then
     echo "Running from CUSTOM JRE"
     "$GITDB_HOME/custom_jre/bin/java" -Dlogging.level.root=WARN -jar "$GITDB_HOME"/gitdb-0.0.2-SNAPSHOT.jar "$@"
 else

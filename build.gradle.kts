@@ -46,5 +46,7 @@ tasks.register<Copy>("buildAndCopyJar") {
     from(file("$buildDir/libs/gitdb-$version.jar"))
     from(file("$buildDir/resources/main/scripts/gitdb"))
     from(file("$buildDir/resources/main/scripts/gitdb.bat"))
+    from(file("$buildDir/resources/main/scripts/gitdblist"))
+    from(file("$buildDir/resources/main/scripts/gitdblist.bat"))
     into(file(System.getenv("GITDB_HOME")))
 }
