@@ -39,14 +39,5 @@ class GitdbApplication {
 }
 
 fun main(args: Array<String>) {
-    setLogLevelPropertyFromEnv()
     GitdbApplication().run(args.toList())
-}
-
-private fun setLogLevelPropertyFromEnv() {
-    try {
-        val key = "org.slf4j.simpleLogger.defaultLogLevel"
-        System.getenv(key)?.let { System.setProperty(key, it) }
-    } catch (ex: SecurityException) {
-    }
 }
