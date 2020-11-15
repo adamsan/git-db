@@ -2,20 +2,19 @@ package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
-import hu.adamsan.gitdb.logging.LoggingUtil
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.sql.DriverManager
 import java.util.*
-import java.util.logging.Logger
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 
 class Init(var userHome: String, private val repoDao: RepoDao) {
-    private val log: Logger = LoggingUtil.getLogger(this.javaClass.name)
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     private val configDir = ".git-db"
 

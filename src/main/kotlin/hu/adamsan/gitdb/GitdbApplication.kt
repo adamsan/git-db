@@ -2,17 +2,15 @@ package hu.adamsan.gitdb
 
 import hu.adamsan.gitdb.commands.*
 import hu.adamsan.gitdb.dao.RepoDao
-import hu.adamsan.gitdb.logging.LoggingUtil
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlite3.SQLitePlugin
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 class GitdbApplication {
 
     private val userHome: String = System.getProperty("user.home")
     private val gitDbHome: String = System.getProperty("GITDB_HOME") ?: System.getenv("GITDB_HOME")
-
-    private val log: Logger = LoggingUtil.getLogger(this.javaClass.name)
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     private fun jdbi(): Jdbi {
         val db = InitObject.dbPath(userHome.orEmpty()).toString()
@@ -41,5 +39,14 @@ class GitdbApplication {
 }
 
 fun main(args: Array<String>) {
+    setLogLevelPropertyFromEnv()
     GitdbApplication().run(args.toList())
+}
+
+private fun setLogLevelPropertyFromEnv() {
+    try {
+        val key = "org.slf4j.simpleLogger.defaultLogLevel"
+        System.getenv(key)?.let { System.setProperty(key, it) }
+    } catch (ex: SecurityException) {
+    }
 }

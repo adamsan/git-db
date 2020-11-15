@@ -2,10 +2,9 @@ package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
-import hu.adamsan.gitdb.logging.LoggingUtil.getLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.nio.file.Paths
-import java.util.logging.Level
-import java.util.logging.Logger
 import java.util.stream.Collectors
 
 /**
@@ -14,7 +13,7 @@ import java.util.stream.Collectors
  */
 class UpdateCommand(val userHome: String, val repoDao: RepoDao) {
 
-    private val log: Logger = getLogger(this.javaClass.name)
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     fun updateForId(args: List<String>?) {
         val id = args!![0].toInt()
