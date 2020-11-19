@@ -47,6 +47,4 @@ internal class InitTest {
 
         // sut.processGitReposOnMachine()
     }
-
-
 }

@@ -44,7 +44,7 @@ Java install not needed, command used to create JRE: `jlink  --output custom_jre
 
 #### From Source
     Required java version: Java 11 or above
- - install `sqlite3` command and add it to path
+ - install `sqlite3` command and add it to path (this required for gitdb ls)
  - clone source code
  - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
  - open up a console and run `gradlew buildAndCopyJar` - this will build the project and copy the jar, and startup scripts to GITDB_HOME
