@@ -24,21 +24,7 @@ class Table {
 
     fun addRow(vararg values: Any?) = this.addRow(values.asList().map { it?.toString() ?: "" })
 
-    fun render(): String {
-        val maxLengths = calculateMaxLengthsPerColumn()
-        val headerLine = maxLengths.zip(header)
-                .map { p -> padMiddle(p.second, p.first) }
-                .joinToString("|")
-        val bodyLines = data.map { row ->
-            maxLengths.zip(row)
-                    .map { p -> padMiddle(p.second, p.first) }
-                    .joinToString("|")
-        }
-        return headerLine +
-                "\n" +
-                "-".repeat(maxLengths.sum() + maxLengths.size) +
-                "\n" + bodyLines.joinToString("\n")
-    }
+    fun render(): String = render(header.map { _ -> CENTER}) // by default render aligns all columns to center
 
     private fun calculateMaxLengthsPerColumn(): List<Int> {
         val headerMaxLengths = header.map { it.length }
