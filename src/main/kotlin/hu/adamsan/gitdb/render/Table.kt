@@ -1,8 +1,6 @@
 package hu.adamsan.gitdb.render
 
 import hu.adamsan.gitdb.render.Align.*
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -10,26 +8,20 @@ import kotlin.math.max
 enum class Align { LEFT, CENTER, RIGHT }
 
 class Table {
-    private var header: List<String> = Collections.emptyList()
+    private var header: MutableList<String> = ArrayList()
 
     private var data: MutableList<List<String>> = ArrayList()
 
-    fun addHeader(header: List<String>) {
-        this.header = header
-    }
+    fun addHeader(vararg headers: String) = this.header.addAll(headers)
 
-    fun addHeader(vararg headers: String) = this.addHeader(headers.asList())
+    fun addRow(vararg values: Any?) = data.add(values.map { it?.toString() ?: "" })
 
-    fun addRow(row: List<String>) = data.add(row)
-
-    fun addRow(vararg values: Any?) = this.addRow(values.asList().map { it?.toString() ?: "" })
-
-    fun render(): String = render(header.map { _ -> CENTER}) // by default render aligns all columns to center
+    fun render(): String = render(header.map { _ -> CENTER }) // by default render aligns all columns to center
 
     private fun calculateMaxLengthsPerColumn(): List<Int> {
-        val headerMaxLengths = header.map { it.length }
+        val headerLengths = header.map { it.length }
         val lengths = data.map { rows -> rows.map { it.length } }
-        return lengths.fold(headerMaxLengths, { acc, rowLengths -> acc.zip(rowLengths).map { a -> max(a.first, a.second) } })
+        return lengths.fold(headerLengths, { acc, rowLengths -> acc.zip(rowLengths).map { max(it.first, it.second) } })
     }
 
     fun padMiddle(s: String, len: Int, pad: Char = ' '): String {
@@ -39,22 +31,16 @@ class Table {
         return before + s + after
     }
 
-    private fun padLeft(s: String, len: Int, pad: Char = ' '): String = s + "$pad".repeat(len - s.length)
-
-    private fun padRight(s: String, len: Int, pad: Char = ' '): String = "$pad".repeat(len - s.length) + s
-
     fun render(alignments: List<Align>): String {
         val maxLengths = calculateMaxLengthsPerColumn()
-        val headerLine = maxLengths.zip(header)
-                .map { p -> padMiddle(p.second, p.first) }
-                .joinToString("|")
+        val headerLine = maxLengths.zip(header).joinToString("|") { padMiddle(it.second, it.first) }
         val bodyLines = data.map { row ->
             maxLengths.zip(row).zip(alignments)
                     .map { p ->
                         when (p.second) {
                             CENTER -> padMiddle(s = p.first.second, len = p.first.first)
-                            LEFT -> padLeft(s = p.first.second, len = p.first.first)
-                            RIGHT -> padRight(s = p.first.second, len = p.first.first)
+                            LEFT -> p.first.second.padEnd(p.first.first)
+                            RIGHT -> p.first.second.padStart(p.first.first)
                         }
                     }
                     .joinToString("|")
