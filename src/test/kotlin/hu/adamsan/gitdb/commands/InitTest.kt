@@ -4,6 +4,7 @@ import hu.adamsan.gitdb.dao.Repo
 import hu.adamsan.gitdb.dao.RepoDao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mockito
@@ -35,16 +36,13 @@ internal class InitTest {
     }
 
     @Test
+    @Disabled
     fun assert_walks_through_filesystem() {
-
-
-        val p = Paths.get("D:\\workspaces\\web_practice\\todo")
-        val commits = InitObject.countCommits("D:\\workspaces\\web_practice\\todo")
-        val date = InitObject.lastCommitDate("D:\\workspaces\\web_practice\\todo")
+        val repoDir = "D:\\workspaces\\web_practice\\todo"
+        val p = Paths.get(repoDir)
+        val commits = InitObject.countCommits(repoDir)
+        val date = InitObject.lastCommitDate(repoDir)
         val r = Repo(1,p.fileName.toString(), p.toString(), false, commits, date, false)
         println(r)
-
-
-        // sut.processGitReposOnMachine()
     }
 }

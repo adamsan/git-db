@@ -18,7 +18,7 @@ class ListCommand(private val userHome: String, private val repoDao: RepoDao) {
             if (parameters.get(0) == "dir" && parameters.size == 1) {
                 //List all directories which contains projects
                 val repos = repoDao.getAll()
-                val projectParentDirs = repos.map { r -> Path(r.path).parent }
+                val projectParentDirs = repos.map { r -> Path(r.path).parent }.toSet()
                 projectParentDirs.forEach { println(it) }
             }
         }
