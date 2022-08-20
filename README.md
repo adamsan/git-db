@@ -18,18 +18,18 @@ You can find and list all the repositories on your machine, or your most recent 
 
 ### Commands:
 
-| Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Description |
-| --- | --- | 
-| `gitdb init` | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir `git config --global init.templatedir ~/.git-db/.git-templates`. Adds a post-commit git hook to all repos with an update <id> call. All new or cloned projects will be tracked. |
-| `gitdb init quick` | same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing. | 
-| `gitdb list` | lists .git repositories on your machine from it's database |
-| `gitdb ls` | same as above, but implemented with a shell script sqlite3 command (it's faster) |
-| `gitdb cd <id>` | change directory to repository identified by id (number / sha / project name). ⚠ In Linux this command needs to be called with `source` in order to effect current working directory. For example: `. gitdb cd 4` |
-| `gitdb favor [id]` | mark repository (by id or by current dir) as favorite |
-| `gitdb unfavor [id]` | unmark repository as favorite |
-| `gitdb help` | prints help
-| `gitdb update <id\|0>` | updates git repo in the current directory - used internally by git hooks
-
+| Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Description                                                                                                                                                                                                                                                                                                   |
+|---------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| `gitdb init`                                                                                                              | creates database, starts scan on all drives for directories containing .git folder. Creates and configures global templatedir `git config --global init.templatedir ~/.git-db/.git-templates`. Adds a post-commit git hook to all repos with an update <id> call. All new or cloned projects will be tracked. |
+| `gitdb init quick`                                                                                                        | same as above, but it only searches in parents of existing git repos (in db), not in drives. For quick testing.                                                                                                                                                                                               | 
+| `gitdb list`                                                                                                              | lists .git repositories on your machine from it's database                                                                                                                                                                                                                                                    |
+| `gitdb list dir`                                                                                                          | lists the parent folder of all repositories                                                                                                                                                                                                                                                                   |
+| `gitdb ls`                                                                                                                | same as above, but implemented with a shell script sqlite3 command (it's faster)                                                                                                                                                                                                                              |
+| `gitdb cd <id>`                                                                                                           | change directory to repository identified by id (number / sha / project name). ⚠ In Linux this command needs to be called with `source` in order to effect current working directory. For example: `. gitdb cd 4`                                                                                             |
+| `gitdb favor [id]`                                                                                                        | mark repository (by id or by current dir) as favorite                                                                                                                                                                                                                                                         |
+| `gitdb unfavor [id]`                                                                                                      | unmark repository as favorite                                                                                                                                                                                                                                                                                 |
+| `gitdb help`                                                                                                              | prints help                                                                                                                                                                                                                                                                                                   |
+| `gitdb update <id\0>`                                                                                                     | updates git repo in the current directory - used internally by git hooks                                                                                                                                                                                                                                      |
 
 ### Install and initialization
 
@@ -43,7 +43,8 @@ Java install not needed, command used to create JRE: `jlink  --output custom_jre
 
 
 #### From Source
-    Required java version: Java 11 or above
+
+    Required java version: Java 17 or above
  - install `sqlite3` command and add it to path (this required for gitdb ls)
  - clone source code
  - set GITDB_HOME environment variable to an existing folder, `D:\Java\gitdb` and add GITDB_HOME to PATH environment variable
@@ -51,8 +52,8 @@ Java install not needed, command used to create JRE: `jlink  --output custom_jre
  - run `gitdb init` command, and confirm. It can take a long time, (~30 min)
 
 ### Screenshots
- <img src="images/gitdb_list.png" width="100%" />
- <img src="images/gitdb_mix.png" width="100%" />
+ <img src="images/gitdb_list.png" width="100%" alt="screenshot" />
+ <img src="images/gitdb_mix.png" width="100%" alt="screenshot" />
 
 ### Similar projects
 

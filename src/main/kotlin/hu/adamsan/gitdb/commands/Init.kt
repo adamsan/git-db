@@ -67,7 +67,7 @@ class Init(var userHome: String, private val repoDao: RepoDao) {
         } else {
             println("This will initialize database, but it can take long (~30 min). Are you sure you want to continue? (Y/N)")
         }
-        return readLine()!!.toUpperCase().startsWith("Y")
+        return readLine()!!.uppercase().startsWith("Y")
     }
 
     private fun clearTableAndSaveRepos(repoPaths: List<String>): List<Repo> {

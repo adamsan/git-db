@@ -1,9 +1,9 @@
 package hu.adamsan.gitdb.commands
 
 import hu.adamsan.gitdb.dao.RepoDao
-import hu.adamsan.gitdb.render.Align
 import hu.adamsan.gitdb.render.Align.*
 import hu.adamsan.gitdb.render.Table
+import kotlin.io.path.Path
 
 
 class ListCommand(private val userHome: String, private val repoDao: RepoDao) {
@@ -14,7 +14,13 @@ class ListCommand(private val userHome: String, private val repoDao: RepoDao) {
             listAll()
         else {
             println("list in $userHome by args $parameters")
-            TODO("Implement list with parameters")
+            //TODO("Implement list with parameters")
+            if (parameters.get(0) == "dir" && parameters.size == 1) {
+                //List all directories which contains projects
+                val repos = repoDao.getAll()
+                val projectParentDirs = repos.map { r -> Path(r.path).parent }
+                projectParentDirs.forEach { println(it) }
+            }
         }
     }
 
@@ -23,16 +29,17 @@ class ListCommand(private val userHome: String, private val repoDao: RepoDao) {
 
         val table = Table()
 
-        table.addHeader(" ID ", " NAME ", " PATH "," FAV "," COMMITS "," LAST COMMIT ", " HAS_REMOTE ")
+        table.addHeader(" ID ", " NAME ", " PATH ", " FAV ", " COMMITS ", " LAST COMMIT ", " HAS_REMOTE ")
 
         repos.forEach { row ->
-            table.addRow(row.id,
-                    row.name,
-                    row.path,
-                    if(row.favorite) "*" else "",
-                    row.commits,
-                    row.lastCommitted,
-                    if(row.hasRemote) "*" else ""
+            table.addRow(
+                row.id,
+                row.name,
+                row.path,
+                if (row.favorite) "*" else "",
+                row.commits,
+                row.lastCommitted,
+                if (row.hasRemote) "*" else ""
             )
         }
 

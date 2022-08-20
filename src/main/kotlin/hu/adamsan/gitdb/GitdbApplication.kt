@@ -13,22 +13,22 @@ class GitdbApplication {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private fun jdbi(): Jdbi {
-        val db = InitObject.dbPath(userHome.orEmpty()).toString()
+        val db = InitObject.dbPath(userHome).toString()
         val jdbi = Jdbi.create("jdbc:sqlite:$db")
         jdbi.installPlugin(SQLitePlugin())
         return jdbi
     }
 
     fun run(args: List<String>) {
-        val command = if (args.isNotEmpty()) args.get(0).toLowerCase().trimEnd().trimStart() else "help"
+        val command = if (args.isNotEmpty()) args.get(0).lowercase().trim() else "help"
         println("running gitdb command: $command")
         log.info("User home: $userHome")
 
-        var repoDao = RepoDao(jdbi());
+        val repoDao = RepoDao(jdbi())
 
         when (command) {
             "init" -> Init(userHome, repoDao).init(args.drop(1))
-            "list" -> ListCommand(userHome, repoDao).list(args.drop(1));
+            "list" -> ListCommand(userHome, repoDao).list(args.drop(1))
             "cd" -> ChangeDirectory(userHome, repoDao, gitDbHome).cd(args.get(1)) // cd should be implemented in bat files?
             "update" -> UpdateCommand(userHome, repoDao).updateForId(args.drop(1))
             "favor" -> Favor(repoDao).favor(args.drop(1))
